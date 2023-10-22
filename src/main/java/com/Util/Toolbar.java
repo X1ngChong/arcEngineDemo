@@ -6,18 +6,16 @@ import com.esri.arcgis.systemUI.esriCommandStyles;
 
 import java.io.IOException;
 
+
 public class Toolbar {
 
     private ToolbarBean toolbar = null; //工具栏
     private IToolbarPalette toolbarPalette =null;
-
     public Toolbar() throws IOException {
-
     }// 右键工具菜单
 
     public void initBar(){//初始化工具栏
         try{
-
             // 对toolbarPalette菜单添加按钮
             toolbarPalette = new ToolbarPalette();
             toolbarPalette.addItem(new ControlsSelectTool(), 0, -1);// 选择
@@ -70,7 +68,6 @@ public class Toolbar {
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
     public ToolbarBean getToolbar() {
         initBar();

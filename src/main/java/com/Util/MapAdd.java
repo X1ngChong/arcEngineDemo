@@ -8,6 +8,13 @@ import java.io.IOException;
 
 public class MapAdd {
    private MapBean map = new MapBean(); //地图容器
+
+
+    public MapBean getMap() {
+        initMaps();
+        return map;
+    }
+
     public void initMaps(){
         try{
             Workspace ws = null;
@@ -23,18 +30,12 @@ public class MapAdd {
             IMap mapDemo = mapDocument.getMap(0); // 这里的0表示第一个地图
 
 
-
             // 将地图添加到地图控件中
             map.setMapByRef(mapDemo);
         }
         catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    public MapBean getMap() {
-        initMaps();
-        return map;
     }
 
     private static IWorkspaceEdit getWorkspaceEdit(IMap map) throws IOException {

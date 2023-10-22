@@ -28,7 +28,6 @@ public class AoInitUtil {
         // 此参数可以通过枚举查看esriProductCode
         boolean s = versionManager.loadVersion(1, "10.2");
 
-
         aoInit = new AoInitialize();
 
         //判断并使用哪个级别的许可，PS：目前应该只能用desktop相关的许可，也就是Advanced，Standard，Basic等
