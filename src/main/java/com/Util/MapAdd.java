@@ -1,10 +1,10 @@
 package com.Util;
 
+import com.Service.WorkspaceService;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.carto.*;
 import com.esri.arcgis.geodatabase.*;
-
-import java.io.IOException;
+import java.util.List;
 
 public class MapAdd {
    private MapBean map = new MapBean(); //地图容器
@@ -30,6 +30,19 @@ public class MapAdd {
             IMap mapDemo = mapDocument.getMap(0); // 这里的0表示第一个地图
 
 
+            // 要读取的 Shapefile 文件路径
+            String shapefilePath = "D:\\arc\\nanshi";
+            WorkspaceService workspaceFactory = new WorkspaceService();
+            IWorkspace workspace  =  workspaceFactory.getWorkspace(shapefilePath);//初始化WorkspaceService
+
+            List<IFeatureClass> allFeatureClass = LeiYaoSuUtil.getAllFeatureClass(workspace, mapDemo);//获取所有的元素
+
+            for(int i = 0;i<allFeatureClass.size();i++){
+                LeiYaoSuUtil.displayAllAttributes(allFeatureClass.get(i));
+                System.out.println("第"+ (i+1) +"个图遍历完成***************");
+            }
+
+
             // 将地图添加到地图控件中
             map.setMapByRef(mapDemo);
         }
@@ -38,30 +51,6 @@ public class MapAdd {
         }
     }
 
-    private static IWorkspaceEdit getWorkspaceEdit(IMap map) throws IOException {
-        // 获取工作空间
-        IWorkspace workspace = (IWorkspace) ((IDataset) map).getWorkspace();
-
-        // 如果工作空间支持编辑，返回工作空间的编辑对象
-        if (workspace instanceof IWorkspaceEdit) {
-            return (IWorkspaceEdit) workspace;
-        }
-
-        return null;
-    }
-
-    private static IFeatureLayer getFeatureLayerByName(IMap map, String layerName) throws IOException {
-        // 遍历地图中的图层，查找指定名称的要素图层
-        for (int i = 0; i < map.getLayerCount(); i++) {
-            ILayer layer = map.getLayer(i);
-
-            if (layer instanceof IFeatureLayer && layer.getName().equalsIgnoreCase(layerName)) {
-                return (IFeatureLayer) layer;
-            }
-        }
-
-        return null;
-    }
 
 
 

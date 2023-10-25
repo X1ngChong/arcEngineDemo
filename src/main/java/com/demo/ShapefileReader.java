@@ -37,7 +37,7 @@ public class ShapefileReader {
             IWorkspace workspace = workspaceFactory.openFromFile(shapefilePath, 0);
 
             // 获取要素类
-            IFeatureClass featureClass = getFeatureClass(workspace);
+            IFeatureClass featureClass = getFeatureClass(workspace,"bulingbin");
 
             // 输出所有属性
             displayAllAttributes(featureClass);
@@ -49,14 +49,16 @@ public class ShapefileReader {
     }
 
 
-    private static IFeatureClass getFeatureClass(IWorkspace workspace) throws Exception {
-        // 获取要素类的名称
-        String featureClassName = "bulingbin";
-
+    private static IFeatureClass getFeatureClass(IWorkspace workspace,String featureClassName) throws Exception {
         // 从工作空间中打开要素类
         return  ((IFeatureWorkspace)workspace).openFeatureClass(featureClassName);
     }
 
+    /**
+     * 可以獲取一個圖層的所有信息
+     * @param featureClass
+     * @throws Exception
+     */
     private static void displayAllAttributes(IFeatureClass featureClass) throws Exception {
         // 获取要素类的字段
         IFields fields = featureClass.getFields();
@@ -71,7 +73,6 @@ public class ShapefileReader {
                 Object value = feature.getValue(i);
                 System.out.println(fieldName + ": " + value);
             }
-
             // 移动到下一要素
             feature = cursor.nextFeature();
         }

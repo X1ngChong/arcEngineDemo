@@ -3,14 +3,18 @@ package com.Util;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
 import com.esri.arcgis.controls.*;
 import com.esri.arcgis.systemUI.esriCommandStyles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 
+
 public class Toolbar {
 
-    private ToolbarBean toolbar = null; //工具栏
-    private IToolbarPalette toolbarPalette =null;
+    public ToolbarBean toolbar=null; //工具栏
+
+    public IToolbarPalette toolbarPalette =null;
     public Toolbar() throws IOException {
     }// 右键工具菜单
 
@@ -28,7 +32,6 @@ public class Toolbar {
             toolbarPalette.addItem(new ControlsNewFreeHandTool(), 0, -1);// 任意线
             toolbarPalette.addItem(new ControlsEditingEditTool(), 0, -1);// 编辑
 
-
             toolbar = new ToolbarBean();
             toolbar.addItem(ControlsOpenDocCommand.getClsid(),0,-1,true,0,
                     esriCommandStyles.esriCommandStyleIconOnly);// 添加打开文件按钮
@@ -36,7 +39,7 @@ public class Toolbar {
                     esriCommandStyles.esriCommandStyleIconOnly); //缩小
             toolbar.addItem(ControlsMapZoomOutTool.getClsid(), 0, 0, false, 0,
                     esriCommandStyles.esriCommandStyleIconOnly); //放大
-            toolbar.addItem(ControlsMapFullExtentCommand.getClsid(), 0,  - 1, false, 0,
+            toolbar.addItem(ControlsMapFullExtentCommand.getClsid(), 0,  - 1, true, 0,
                     esriCommandStyles.esriCommandStyleIconOnly); //全图
             toolbar.addItem(ControlsMapPanTool.getClsid(), 0, 0, false, 0,
                     esriCommandStyles.esriCommandStyleIconOnly); //移动
@@ -59,8 +62,6 @@ public class Toolbar {
             toolbar.addItem(ControlsMapViewMenu.getClsid(),0,0,false,0,
                     esriCommandStyles.esriCommandStyleIconOnly );
 
-//            toolbar.addItem(Controls.getClsid(),0,0,false,0,
-//                    esriCommandStyles.esriCommandStyleIconOnly );
 
 
             toolbar.addItem(toolbarPalette,0,-1,true,0,1); // 编辑菜单

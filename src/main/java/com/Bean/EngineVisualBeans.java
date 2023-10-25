@@ -1,14 +1,12 @@
 package com.Bean;
 
+import com.Service.WorkspaceService;
 import com.Util.AoInitUtil;
 import com.Util.MapAdd;
 import com.Util.Toolbar;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
-import com.esri.arcgis.datasourcesfile.ArcInfoWorkspaceFactory;
-import com.esri.arcgis.geodatabase.IWorkspace;
-import com.esri.arcgis.geodatabase.IWorkspaceFactory;
 import com.esri.arcgis.system.AoInitialize;
 
 
@@ -32,6 +30,10 @@ public class EngineVisualBeans {
         }
 
 
+
+        /**
+         * 可視化處理
+         */
         //创建一个地图可视化组件并加载一个.mxd地图文档。
         MapAdd mapTemp = new MapAdd();
         MapBean map = mapTemp.getMap(); //地图容器
@@ -42,7 +44,13 @@ public class EngineVisualBeans {
         TOCBean toc = new TOCBean(); //内容列表
 
 
+        /**
+         * 操作處理
+         */
         // 在地图控件上关联事件处理程序
+
+        //獲取圖層下所有地圖的類要素
+
 
 
 
