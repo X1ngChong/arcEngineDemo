@@ -15,13 +15,13 @@ public class WorkspaceService {
     private static IWorkspace workspace;
 
 
-    public IWorkspace getWorkspace(String shapefilePath) throws IOException {
+    public static IWorkspace getWorkspace(String shapefilePath) throws IOException {
         IWorkspaceFactory workspaceFactory = new ShapefileWorkspaceFactory();
         workspace = workspaceFactory.openFromFile(shapefilePath, 0);
         return workspace;
     }
 
-    public IWorkspace getWorkspace(){
+    public static IWorkspace getWorkspace(){
         return  workspace;
     }
 

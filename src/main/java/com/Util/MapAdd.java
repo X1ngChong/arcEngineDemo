@@ -32,8 +32,7 @@ public class MapAdd {
 
             // 要读取的 Shapefile 文件路径
             String shapefilePath = "D:\\arc\\nanshi";
-            WorkspaceService workspaceFactory = new WorkspaceService();
-            IWorkspace workspace  =  workspaceFactory.getWorkspace(shapefilePath);//初始化WorkspaceService
+            IWorkspace workspace  =  WorkspaceService.getWorkspace(shapefilePath);//初始化WorkspaceService
 
             List<IFeatureClass> allFeatureClass = LeiYaoSuUtil.getAllFeatureClass(workspace, mapDemo);//获取所有的元素
 
