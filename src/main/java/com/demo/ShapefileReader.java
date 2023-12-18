@@ -37,7 +37,7 @@ public class ShapefileReader {
             IWorkspace workspace = workspaceFactory.openFromFile(shapefilePath, 0);
 
             // 获取要素类
-            IFeatureClass featureClass = getFeatureClass(workspace,"bulingbin");
+            IFeatureClass featureClass = getFeatureClass(workspace,"building");
 
             // 输出所有属性
             displayAllAttributes(featureClass);

@@ -3,20 +3,14 @@ package com.Util;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
 import com.esri.arcgis.controls.*;
 import com.esri.arcgis.systemUI.esriCommandStyles;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-
-
 
 public class Toolbar {
 
     public ToolbarBean toolbar=null; //工具栏
 
     public IToolbarPalette toolbarPalette =null;
-    public Toolbar() throws IOException {
-    }// 右键工具菜单
+    public Toolbar(){
+    }// 工具菜单
 
     public void initBar(){//初始化工具栏
         try{
@@ -61,7 +55,6 @@ public class Toolbar {
 
             toolbar.addItem(ControlsMapViewMenu.getClsid(),0,0,false,0,
                     esriCommandStyles.esriCommandStyleIconOnly );
-
 
 
             toolbar.addItem(toolbarPalette,0,-1,true,0,1); // 编辑菜单
