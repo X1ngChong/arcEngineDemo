@@ -45,6 +45,28 @@
       <systemPath>${pom.basedir}\src\lib\arcobjects.jar</systemPath>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.neo4j.driver</groupId>
+      <artifactId>neo4j-java-driver</artifactId>
+      <version>4.4.9</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.osgeo</groupId>
+      <artifactId>proj4j</artifactId>
+      <version>0.1.0</version> <!-- 版本号可能有更新 -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.25</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <build>
