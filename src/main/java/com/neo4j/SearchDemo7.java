@@ -28,9 +28,10 @@ public class SearchDemo7{
     }
 
     public static  ArrayList<String[]> searchDemo() {
+        GetDataFromFile util = new GetDataFromFile();
 
-        String[] searches = GetDataFromFile.getPlace();//交替查询可以减少很多输出结果
-        String[] positions = GetDataFromFile.getLocation();
+        String[] searches = util.getPlace();//交替查询可以减少很多输出结果
+        String[] positions = util.getLocation();
 
 //        String[] searches = {"pitch", "pitch", "pitch", "building"};//361个
 //        String[] positions = {"东北", "东北", "西北","北"};

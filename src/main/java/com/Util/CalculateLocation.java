@@ -44,14 +44,9 @@ public class CalculateLocation {
             result = result+"";
         }
 
-
-
         // 返回中心点坐标
         return result;
     }
-
-
-
 
     public static double GetJiaoDu(List<Object> bbox1,List<Object> bbox2 )
     {
@@ -99,6 +94,5 @@ public class CalculateLocation {
         else if ((jiaodu > 280) && (jiaodu <= 350)){
             result += "西北";}
             return result;
-
     }
 }

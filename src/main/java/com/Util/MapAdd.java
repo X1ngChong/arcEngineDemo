@@ -1,6 +1,7 @@
 package com.Util;
 
 
+import com.Common.PathCommon;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.carto.*;
 import com.esri.arcgis.geodatabase.*;
@@ -9,18 +10,17 @@ import com.esri.arcgis.geodatabase.*;
 
 public class MapAdd {
 
-    public MapBean getMap() {
+    public MapBean getMap(String mxdPath) {
+        mxdPath = PathCommon.caoTuFileName+"/"+mxdPath;
+        System.out.println(mxdPath);
         MapBean map = new MapBean(); //地图容器
-        initMaps(map);
+        initMaps(map,mxdPath);
         return map;
     }
 
-    public void initMaps(MapBean map){
+    public void initMaps(MapBean map,String mxdPath){
         try{
             Workspace ws = null;
-
-            // 指定.mxd文件的路径
-            String mxdPath = "D:\\arc\\arcgisdemo\\demo.mxd";
 
             // 打开地图文档
             IMapDocument mapDocument = new MapDocument();

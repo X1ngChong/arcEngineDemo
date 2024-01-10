@@ -1,10 +1,8 @@
 package com.Bean;
 
+import com.Common.PathCommon;
 import com.Service.impl.Neo4jServiceImpl;
-import com.Util.AoInitUtil;
-import com.Util.JPanelUtil;
-import com.Util.MapAdd;
-import com.Util.Toolbar;
+import com.Util.*;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
@@ -48,7 +46,7 @@ public class EngineVisualBeans {
 
 
     static{
-      list= SearchDemo7.searchDemo();
+      list = SearchDemo7.searchDemo();
     }
     public  void initialVisual() throws Exception {
         //ae许可初始化
@@ -75,11 +73,17 @@ public class EngineVisualBeans {
          */
         //创建一个地图可视化组件并加载一个.mxd地图文档。
         MapAdd mapTemp = new MapAdd();
-        MapBean map = mapTemp.getMap(); //地图容器
+        MapBean map = mapTemp.getMap("demo.mxd"); //地图容器
+
+        //TODO 根据输入的草图名称去选择草图视图。
+        MapBean caoTuMap  = mapTemp.getMap("caixiangyu.mxd"); //草图
+
 
         //创建工具栏可视化组件并添加标准ESRI工具和命令。
         Toolbar tool = new Toolbar(); //工具栏
-        ToolbarBean toolbar = tool.getToolbar();//获取ToolbarBean
+        ToolbarBean toolbar = tool.getToolbar();//获取ToolbarBean、
+        ToolbarBean toolbar2 = tool.getToolbar();//获取ToolbarBean
+
 
         //为地图创建一个目录（TOCBean）可视化组件。
         TOCBean toc = new TOCBean(); //内容列表
@@ -87,20 +91,46 @@ public class EngineVisualBeans {
         //将地图组件与工具栏和TOC组件组合在一起。
         toolbar.setBuddyControl(map);
         toc.setBuddyControl(map);
+        toolbar2.setBuddyControl(caoTuMap);
 
         // 创建内容
+
         JPanel panel = new JPanel();
-        panel.setBackground( new Color(99,153,255));
+        panel.setBackground(new Color(99,153,255));
+
+
+        // 创建剩余列表弹窗窗口
+        JDialog popupDialog = new JDialog(); // 创建一个新的弹窗窗口实例
+
+
+        // 创建草图弹窗口
+        JDialog caoTuLog = new JDialog(); // 创建一个新的弹窗窗口实例
 
         //初始化列表
         for (int i = 0; list.size() >= 10 ? i < 10 :  i< list.size(); i++) {
-            JLabel label;
+            JButton label;
             if(i== 0){
-//                System.out.println(list.get(0)[0]);
-                label = new JLabel("当前展示id为:"+list.get(index + i)[0]+"名称为:"+neo4jService.getNameByOsmId(list.get(index + i)));//获取当前数组下标之后的元素(包括当前元素)
+                label = new JButton(index+i+":"+list.get(index + i)[0]+"名称为:"+neo4jService.getNameByOsmId(list.get(index + i)));//获取当前数组下标之后的元素(包括当前元素)
             }else{
-               label = new JLabel(Arrays.toString(list.get(index + i)));//获取当前数组下标之后的元素(包括当前元素)
+               label = new JButton(index+i+":"+Arrays.toString(list.get(index + i)));//获取当前数组下标之后的元素(包括当前元素)
             }
+            /**
+             * 为每个按钮添加一个点击事件动态根据index
+             */
+            label.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // 在按钮点击时执行的方法
+                    try {
+                        int tempIndex = Integer.parseInt(label.getText().split(":")[0]);//不变的tempIndex
+                        showData(tempIndex);
+                        JPanelUtil.updatePanel(panel,list,tempIndex,neo4jService);
+//                        System.out.println(tempIndex);
+                        index = tempIndex;
+                    } catch (Exception ex) {
+                        System.out.println("查看失败");
+                    }
+                }
+            });
             // 将标签添加到面板中
             panel.add(label);
         }
@@ -179,6 +209,18 @@ public class EngineVisualBeans {
             }
         });
 
+        // Create a button to trigger the name selection dialog
+        JButton selectNameButton = new JButton("请选择草图");
+        selectNameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Display the name selection dialog
+               String name = showNameSelectionDialog();//获取选中的草图名称
+                JPanelUtil.updateCaoTuLogMap(caoTuMap,mapTemp,caoTuLog,name+".mxd",toolbar2);
+            }
+        });
+        selectNameButton.setBounds(150, 300, 120, 30);
+
         //构建 frame.
         JFrame frame = new JFrame("Arcgis Engine");
 
@@ -190,7 +232,7 @@ public class EngineVisualBeans {
         frame.add(showDataButton3);
         showDataButton4.setBounds(150, 200, 120, 30);
         frame.add(showDataButton4);
-
+        frame.add(selectNameButton);
 
         panel.setBounds(150, 300, 300, 250);
         frame.add(panel);
@@ -198,14 +240,29 @@ public class EngineVisualBeans {
 
         frame.add(map, BorderLayout.CENTER);
         frame.add(toolbar, BorderLayout.NORTH);
-        frame.add(toc, BorderLayout.WEST);
-
+        frame.add(toc,BorderLayout.WEST);
 
 
         frame.setSize(1000,1000);
         frame.setLocation(400,200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+
+        popupDialog.setTitle("剩余列表"); // 设置弹窗标题
+        popupDialog.setSize(300, 200); // 设置弹窗大小，根据需要调整大小和形状等属性
+        popupDialog.setLocation(200,800);
+        popupDialog.getContentPane().add(panel); // 将标签添加到弹窗中
+        popupDialog.setVisible(true); // 显示弹窗窗口
+
+        caoTuLog.add(caoTuMap,BorderLayout.CENTER);
+        caoTuLog.add(toolbar2,BorderLayout.NORTH);
+        caoTuLog.setTitle("草图视图"); // 设置弹窗标题
+        caoTuLog.setSize(500, 500); // 设置弹窗大小，根据需要调整大小和形状等属性
+        caoTuLog.setLocation(200,200);
+        caoTuLog.setVisible(true);// 显示弹窗窗口
+
+
         return map;
     }
 
@@ -307,6 +364,42 @@ public IEnvelope setExtent(IEnvelope extent) throws IOException {
         }
         set.clear();//清除集合
         return false; // 没有重复元素
+    }
+
+    private String showNameSelectionDialog()  {
+        // Specify the directory path
+        String directoryPath = PathCommon.caoTuFileName;
+
+        // Get file names from the specified directory
+        String[] possibleNames;
+        try {
+            possibleNames = CommonUtil.getFileNames(directoryPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+//        // Create an array of possible names (adjust this based on your data)
+//        String[] possibleNames = {"Name1", "Name2", "Name3"};
+
+        // Create a combo box with the possible names
+        JComboBox<String> nameComboBox = new JComboBox<>(possibleNames);
+
+        // Create the option pane with the combo box and OK button
+        JOptionPane optionPane = new JOptionPane(nameComboBox, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+
+        // Show the option pane and get the user's choice
+        JDialog dialog = optionPane.createDialog("图层列表");
+        dialog.setVisible(true);
+
+        // Check if the user selected "OK"
+        String name = null;
+        if (optionPane.getValue() != null && (int) optionPane.getValue() == JOptionPane.OK_OPTION) {
+            // Get the selected name from the combo box
+            name =  (String) nameComboBox.getSelectedItem();
+            // Do something with the selected name (e.g., assign it to a variable)
+            System.out.println("选择的图层: " + name);
+        }
+        return name;
     }
 
 }
