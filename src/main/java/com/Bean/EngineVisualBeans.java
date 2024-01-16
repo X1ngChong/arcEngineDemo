@@ -44,6 +44,7 @@ public class EngineVisualBeans {
 
     private static Set<Object> set = new HashSet<>();
 
+     private static JDialog caoTuLog = new JDialog();
 
     static{
       list = SearchDemo7.searchDemo();
@@ -104,7 +105,7 @@ public class EngineVisualBeans {
 
 
         // 创建草图弹窗口
-        JDialog caoTuLog = new JDialog(); // 创建一个新的弹窗窗口实例
+//        JDialog caoTuLog = new JDialog(); // 创建一个新的弹窗窗口实例
 
         //初始化列表
         for (int i = 0; list.size() >= 10 ? i < 10 :  i< list.size(); i++) {
@@ -214,9 +215,9 @@ public class EngineVisualBeans {
         selectNameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Display the name selection dialog
-               String name = showNameSelectionDialog();//获取选中的草图名称
-                JPanelUtil.updateCaoTuLogMap(caoTuMap,mapTemp,caoTuLog,name+".mxd",toolbar2);
+                // 显示新的弹窗
+                String name = showNameSelectionDialog(); // 获取选中的草图名称
+                 caoTuLog = JPanelUtil.updateCaoTuLogMap(caoTuMap, mapTemp, caoTuLog, name + ".mxd", toolbar2);
             }
         });
         selectNameButton.setBounds(150, 300, 120, 30);
@@ -250,8 +251,8 @@ public class EngineVisualBeans {
 
 
         popupDialog.setTitle("剩余列表"); // 设置弹窗标题
-        popupDialog.setSize(300, 200); // 设置弹窗大小，根据需要调整大小和形状等属性
-        popupDialog.setLocation(200,800);
+        popupDialog.setSize(400, 400); // 设置弹窗大小，根据需要调整大小和形状等属性
+        popupDialog.setLocation(200,400);
         popupDialog.getContentPane().add(panel); // 将标签添加到弹窗中
         popupDialog.setVisible(true); // 显示弹窗窗口
 

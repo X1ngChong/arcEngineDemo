@@ -34,26 +34,50 @@ public class JPanelUtil {
     }
 
     //TODO
-    public  static  void updateCaoTuLogMap(MapBean caoTuLogMap,   MapAdd mapTemp,  JDialog caoTuLog , String mapFileName,   ToolbarBean toolbar2) {
-       // 清理之前的地图资源
-        caoTuLog.setVisible(false);
+    public static JDialog updateCaoTuLogMap(MapBean caoTuLogMap, MapAdd mapTemp, JDialog caoTuLog, String mapFileName, ToolbarBean toolbar2) {
 
-        caoTuLog.dispose();
+        if (caoTuLog != null) {
+            caoTuLog.dispose();
+            caoTuLog = new JDialog();
+            try {
+                caoTuLogMap.clearLayers();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-         caoTuLogMap = mapTemp.getMap(mapFileName); // 加载新的地图
-        JDialog caoTuLogTemp = new JDialog();
+        }
+
+
+        caoTuLogMap = mapTemp.getMap(mapFileName); // 加载新的地图
+
+//        JDialog caoTuLogTemp = new JDialog();
 
         try {
+
             toolbar2.setBuddyControl(caoTuLogMap);
+
         } catch (IOException e) {
+
             throw new RuntimeException(e);
+
         }
-        caoTuLogTemp.setTitle("更改后");
-        caoTuLogTemp.add(caoTuLogMap,BorderLayout.CENTER);
-        caoTuLogTemp.add(toolbar2,BorderLayout.NORTH);
-        caoTuLogTemp.setTitle("草图视图"); // 设置弹窗标题
-        caoTuLogTemp.setSize(500, 500); // 设置弹窗大小，根据需要调整大小和形状等属性
-        caoTuLogTemp.setLocation(200,200);
-        caoTuLogTemp.setVisible(true);// 显示弹窗窗口
+
+        caoTuLog.setTitle("更改后");
+
+        caoTuLog.add(caoTuLogMap, BorderLayout.CENTER);
+
+        caoTuLog.add(toolbar2, BorderLayout.NORTH);
+
+        caoTuLog.setTitle("草图视图"); // 设置弹窗标题
+
+        caoTuLog.setSize(500, 500); // 设置弹窗大小，根据需要调整大小和形状等属性
+
+        caoTuLog.setLocation(200, 200);
+
+        caoTuLog.setVisible(true); // 显示弹窗窗口
+
+        return caoTuLog;
+
     }
+
 }
