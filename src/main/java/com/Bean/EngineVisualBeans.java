@@ -14,9 +14,8 @@ import com.esri.arcgis.geodatabase.*;
 import com.esri.arcgis.geometry.Envelope;
 import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
-import com.neo4j.SearchDemo6;
 import com.neo4j.SearchDemo7;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 
@@ -47,7 +46,11 @@ public class EngineVisualBeans {
      private static JDialog caoTuLog = new JDialog();
 
     static{
-      list = SearchDemo7.searchDemo();
+        System.out.println("初始化中");
+        list = SearchDemo7.searchDemo();
+//        SearchDemo8 searchDemo8 = new SearchDemo8();
+//      list = searchDemo8.searchDemo("wangmengyi");
+        System.out.println("初始化完成");
     }
     public  void initialVisual() throws Exception {
         //ae许可初始化
@@ -73,8 +76,9 @@ public class EngineVisualBeans {
          * 可視化處理
          */
         //创建一个地图可视化组件并加载一个.mxd地图文档。
+
         MapAdd mapTemp = new MapAdd();
-        MapBean map = mapTemp.getMap("demo.mxd"); //地图容器
+        MapBean map = mapTemp.getMap(PathCommon.caoTuName); //地图容器
 
         //TODO 根据输入的草图名称去选择草图视图。
         MapBean caoTuMap  = mapTemp.getMap("caixiangyu.mxd"); //草图
@@ -119,6 +123,8 @@ public class EngineVisualBeans {
              * 为每个按钮添加一个点击事件动态根据index
              */
             label.addActionListener(new ActionListener() {
+
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     // 在按钮点击时执行的方法
                     try {
@@ -213,11 +219,15 @@ public class EngineVisualBeans {
         // Create a button to trigger the name selection dialog
         JButton selectNameButton = new JButton("请选择草图");
         selectNameButton.addActionListener(new ActionListener() {
-            @Override
+            @Override                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
             public void actionPerformed(ActionEvent e) {
                 // 显示新的弹窗
                 String name = showNameSelectionDialog(); // 获取选中的草图名称
+//                list = SearchDemo7.searchDemo(name);
                  caoTuLog = JPanelUtil.updateCaoTuLogMap(caoTuMap, mapTemp, caoTuLog, name + ".mxd", toolbar2);
+//                 index = 0;
+//                JPanelUtil.updatePanel(panel,list,index,neo4jService);
+
             }
         });
         selectNameButton.setBounds(150, 300, 120, 30);
@@ -267,7 +277,12 @@ public class EngineVisualBeans {
         return map;
     }
 
-public void showData(Integer number) throws IOException {
+    /**
+     * TODO 更改地图后查询不到匹配的数据
+     * @param number
+     * @throws IOException
+     */
+    public void showData(Integer number) throws IOException {
     MapControl mapControl = map.getMapControl();//获取map
         /**
         * 遍历所有图层查询数据

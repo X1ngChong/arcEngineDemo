@@ -26,6 +26,8 @@ public class SearchDemo6 {
         String[] searches = {"pitch", "pitch", "pitch", "building","building","building"};
         String[] positions = {"北", "东", "北","西","西","北"};
 
+
+
 //        String[] searches = {"pitch", "pitch", "pitch", "building"};
 //        String[] positions = {"北", "东", "北","北"};
 

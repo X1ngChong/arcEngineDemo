@@ -16,43 +16,27 @@ import java.util.concurrent.CompletableFuture;
 import static org.neo4j.driver.Values.parameters;
 
 /**
- *
- * 修复demo6的重复数据'88780390','191938463','88780390','188614445','99978647','99978643',(去除重复数据)->完成
+ * 问题草图转换的数据太大
  */
-public class SearchDemo7{
-    private  static  Node firstNode;
-    private static int all = 0;
-    private static int place = 0;
+public class SearchDemo8{
+    private    Node firstNode;
+    private  int all = 0;
+    private  int place = 0;
 
-    private static ArrayList<String[]> list = new ArrayList<>();//把StringBuilder变成String[]
+    private  ArrayList<String[]> list = new ArrayList<>();//把StringBuilder变成String[]
 
     public static void main(String[] args) {
-        searchDemo();
+        SearchDemo8 searchDemo8 = new SearchDemo8();
+        searchDemo8.searchDemo("wangmengyi");
     }
-    public static  ArrayList<String[]> searchDemo() {
-        GetDataFromFile util = new GetDataFromFile();
-        String[] searches = util.getPlace();//交替查询可以减少很多输出结果
-        String[] positions = util.getLocation();
+    public   ArrayList<String[]> searchDemo(String labelName) {
+        SearchCaoTuDemo searchCaoTuDemo = new SearchCaoTuDemo(labelName);
+        String[] searches = searchCaoTuDemo.getSearches().toArray(new String[0]);//交替查询可以减少很多输出结果
+        String[] positions =searchCaoTuDemo.getPositions().toArray(new String[0]);
 
-//        String[] searches = {"pitch", "building", "building", "building", "building", "building", "building", "building"};
-//        String[] positions = {"西北", "东", "西北", "西", "东", "北", "北", "西北"};
+        System.out.println(Arrays.toString(searches));
+        System.out.println(Arrays.toString(positions));
 
-
-//        String[] searches = {"pitch", "pitch", "pitch", "building"};//361个
-//        String[] positions = {"东北", "东北", "西北","北"};
-
-//        String[] searches = {"pitch", "pitch", "pitch", "building","car_wash"};//9个结果
-//        String[] positions = {"北", "东", "北","北","北"};
-
-
-//        String[] searches = {"pitch", "pitch", "building", "pitch"};//交替查询可以减少很多输出结果
-//        String[] positions = {"东北", "西北", "东南","东北"};
-
-//        String[] searches = {"pitch", "pitch", "pitch", "pitch","pitch"};//交替查询可以减少很多输出结果
-//        String[] positions = {"东", "东", "东北","东","东北"};
-
-//        String[] searches = {"pitch", "stadium", "restaurant"};
-//        String[] positions = {"东南", "东南", "东南"};
 
         try (DriverCommon driverCommon = new DriverCommon()) {
 
@@ -63,7 +47,7 @@ public class SearchDemo7{
                     long startTime = System.currentTimeMillis();
                     StringBuilder initialResult = new StringBuilder();
                     runRecursiveQuery(tx, searches, positions, null, 0,initialResult);
-//                    System.out.println(all);
+                    System.out.println(all);
                     long endTime = System.currentTimeMillis();
                     System.out.println("程序运行时间：" + (endTime - startTime) + "毫秒");
                     // 提交事务
@@ -85,7 +69,7 @@ public class SearchDemo7{
      * @param
      * @return
      */
-    private static void runRecursiveQuery(Transaction tx, String[] searches, String[] positions, Node beginNode, int currentIndex,StringBuilder currentResult) {
+    private  void runRecursiveQuery(Transaction tx, String[] searches, String[] positions, Node beginNode, int currentIndex,StringBuilder currentResult) {
         Result result;
         if (currentIndex==0){
             // 如果是第一次查询走这个方法
@@ -93,7 +77,7 @@ public class SearchDemo7{
 
             while (result.hasNext()) {
                 place++;
-                System.out.println(place);
+//                System.out.println(place);
                 StringBuilder newResult = new StringBuilder("");
                 // 递归调用下一次查询
                 Record record = result.next();
@@ -145,7 +129,7 @@ public class SearchDemo7{
                         }
                         String[] resultArray = currentResult.toString().split(",");
                         list.add(resultArray);
-                    System.out.println(list.get(0)[0]);
+//                    System.out.println(list.get(0)[0]);
                         all++;
                         currentResult.delete(length,currentResult.length());  // Remove the last added node
                     }
@@ -164,7 +148,7 @@ public class SearchDemo7{
      * @param beginNode
      * @return
      */
-    private static Result runQuery(Transaction tx, String search, String search2, String position, Node beginNode) {
+    private  Result runQuery(Transaction tx, String search, String search2, String position, Node beginNode) {
         StringBuilder cypherQuery = new StringBuilder();
         if(search == null){
             cypherQuery.append("MATCH (beginNode)");
