@@ -14,7 +14,6 @@ public class WorkspaceService {
 
     private static IWorkspace workspace;
 
-
     public static IWorkspace getWorkspace(String shapefilePath) throws IOException {
         IWorkspaceFactory workspaceFactory = new ShapefileWorkspaceFactory();
         workspace = workspaceFactory.openFromFile(shapefilePath, 0);

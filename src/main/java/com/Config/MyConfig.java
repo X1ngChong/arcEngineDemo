@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MyConfig {
 
-
     public ToolbarBean toolbar(){
         Toolbar toolbar =  new Toolbar();
         return toolbar.getToolbar();

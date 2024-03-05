@@ -2,12 +2,11 @@ package com.neo4j;
 
 import com.Common.DriverCommon;
 import com.Util.CalculateLocation;
-import com.Util.GetDataFromFile;
 import com.neo4j.caotu.SearchCaoTuDemo;
+import com.neo4j.caotu.SearchCaoTuDemo1;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,9 +16,10 @@ import static org.neo4j.driver.Values.parameters;
 
 /**
  * 问题草图转换的数据太大
+ * 1.解决方法一 取出三个标志性地物然后按数量大小进行倒叙排序然后进行地物的 类型关系
  * @author JXS
  */
-public class SearchDemo8{
+public class SearchDemo9 {
     private    Node firstNode;
     private  int all = 0;
     private  int place = 0;
@@ -27,13 +27,13 @@ public class SearchDemo8{
     private  ArrayList<String[]> list = new ArrayList<>();//把StringBuilder变成String[]
 
     public static void main(String[] args) {
-        SearchDemo8 searchDemo8 = new SearchDemo8();
-        searchDemo8.searchDemo("wangmengyi");
+        SearchDemo9 searchDemo9 = new SearchDemo9();
+        searchDemo9.searchDemo("chenhui");
     }
     public   ArrayList<String[]> searchDemo(String labelName) {
-        SearchCaoTuDemo searchCaoTuDemo = new SearchCaoTuDemo(labelName);
-        String[] searches = searchCaoTuDemo.getSearches().toArray(new String[0]);//交替查询可以减少很多输出结果
-        String[] positions =searchCaoTuDemo.getPositions().toArray(new String[0]);
+        SearchCaoTuDemo1 searchCaoTuDemo1 = new SearchCaoTuDemo1(labelName);
+        String[] searches = searchCaoTuDemo1.getSearches().toArray(new String[0]);//交替查询可以减少很多输出结果
+        String[] positions =searchCaoTuDemo1.getPositions().toArray(new String[0]);
 
         System.out.println(Arrays.toString(searches));
         System.out.println(Arrays.toString(positions));
@@ -125,11 +125,9 @@ public class SearchDemo8{
                     if (CalculateLocation.GetDirection(beginBbox, endNode.get("bbox").asList()).contains(positions[positions.length-1])) {
                         int length = currentResult.length();
                         currentResult.append("'").append(endNode.get("osm_id").asString()).append("'");
-
-//                        if(currentResult.toString().contains("265949063")){//看是否可以查到
-//                            System.out.println(currentResult.toString());
-//                        }
-
+                        if(currentResult.toString().contains("265949063")){//看是否可以查到
+                            System.out.println(currentResult.toString());
+                        }
                         String[] resultArray = currentResult.toString().split(",");
                         list.add(resultArray);
 //                    System.out.println(list.get(0)[0]);

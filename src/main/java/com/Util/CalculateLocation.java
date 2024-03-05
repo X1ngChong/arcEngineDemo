@@ -23,30 +23,30 @@ public class CalculateLocation {
         return new double[]{centerX, centerY};
     }
 
-    public static String calculateLocation(List<Object> bbox1,List<Object> bbox2) {
-        double[] center1 = calculateCenterPoint(bbox1);
-        double[] center2 = calculateCenterPoint(bbox2);
-            String result = "";
-        if (center1[0] < center2[0]) {
-           result = result+"西";
-        } else if (center1[0] > center2[0]) {
-            result = result+"东";
-        } else {//如果在同一点
-            result = result+"";
-        }
-
-        // 比较 y 轴上的相对位置
-        if (center1[1] < center2[1]) {
-            result = result+"南";
-        } else if (center1[1] > center2[1]) {
-            result = result+"北";
-        } else {//如果在同一点
-            result = result+"";
-        }
-
-        // 返回中心点坐标
-        return result;
-    }
+//    public static String calculateLocation(List<Object> bbox1,List<Object> bbox2) {
+//        double[] center1 = calculateCenterPoint(bbox1);
+//        double[] center2 = calculateCenterPoint(bbox2);
+//            String result = "";
+//        if (center1[0] < center2[0]) {
+//           result = result+"西";
+//        } else if (center1[0] > center2[0]) {
+//            result = result+"东";
+//        } else {//如果在同一点
+//            result = result+"";
+//        }
+//
+//        // 比较 y 轴上的相对位置
+//        if (center1[1] < center2[1]) {
+//            result = result+"南";
+//        } else if (center1[1] > center2[1]) {
+//            result = result+"北";
+//        } else {//如果在同一点
+//            result = result+"";
+//        }
+//
+//        // 返回中心点坐标
+//        return result;
+//    }
 
     public static double GetJiaoDu(List<Object> bbox1,List<Object> bbox2 )
     {
@@ -61,18 +61,29 @@ public class CalculateLocation {
         double r2 = 0;
         double pi = Math.PI;
         // 再根据条件将象限角θ转换为方位角α：
-        if ((x2 - x1) > 0 && (y2 - y1) > 0)
+        if ((x2 - x1) > 0 && (y2 - y1) > 0) {
             r2 = 90 - r1 / pi * 180;
-        if ((x2 - x1) < 0 && (y2 - y1) > 0)
+        }
+        if ((x2 - x1) < 0 && (y2 - y1) > 0) {
             r2 = 360 + r1 / pi * 180;
-        if ((x2 - x1) < 0 && (y2 - y1) < 0)
+        }
+        if ((x2 - x1) < 0 && (y2 - y1) < 0) {
             r2 = 270 - r1 / pi * 180;
-        if ((x2 - x1) > 0 && (y2 - y1) < 0)
+        }
+        if ((x2 - x1) > 0 && (y2 - y1) < 0) {
             r2 = 90 - r1 / pi * 180;
+        }
 
 
         return r2;
     }
+
+    /**
+     * 准确方位
+     * @param bbox1
+     * @param bbox2
+     * @return
+     */
     public static String GetDirection(List<Object> bbox1,List<Object> bbox2)
     {
         String result = "";
@@ -94,5 +105,45 @@ public class CalculateLocation {
         else if ((jiaodu > 280) && (jiaodu <= 350)){
             result += "西北";}
             return result;
+    }
+
+    /**
+     * 明显方位
+     * @param bbox1
+     * @param bbox2
+     * @return
+     */
+    public static String getDirection2(List<Object> bbox1, List<Object> bbox2)
+    {
+        double[] center1 = calculateCenterPoint(bbox1);
+        double[] center2 = calculateCenterPoint(bbox2);
+
+        String result = "";
+
+        // 计算两点之间的斜率
+        double slope = (center1[0] - center2[0]) / (center1[1] - center2[1]);
+
+        // 如果斜率的绝对值大于1，则认为明显在东西方位
+        if (Math.abs(slope) > 1.4) {
+            if(center1[0] - center2[0] < 0 ){
+                result += "东";
+            }
+           else if(center1[0] - center2[0] > 0 ){
+                result += "西";
+            }
+        }
+        // 如果斜率的绝对值小于1，则认为明显在南北方位
+        else if(Math.abs(slope) < 0.7){
+            if(center1[1] - center2[1] < 0 ){
+                result += "北";
+            }
+            else if(center1[1] - center2[1] > 0 ){
+                result += "南";
+            }
+        }
+        else{
+            result  = GetDirection(bbox1, bbox2);
+        }
+        return result;
     }
 }

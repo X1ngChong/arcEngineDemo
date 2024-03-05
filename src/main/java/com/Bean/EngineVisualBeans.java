@@ -16,6 +16,8 @@ import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
 import com.neo4j.SearchDemo7;
 
+import com.neo4j.SearchDemo9;
+import com.neo4j.caotu.SearchCaoTuDemo1;
 import org.springframework.stereotype.Component;
 
 
@@ -47,9 +49,12 @@ public class EngineVisualBeans {
 
     static{
         System.out.println("初始化中");
-        list = SearchDemo7.searchDemo();
-//        SearchDemo8 searchDemo8 = new SearchDemo8();
-//      list = searchDemo8.searchDemo("wangmengyi");
+      //   list = SearchDemo7.searchDemo();
+
+
+        SearchDemo9 searchDemo = new SearchDemo9();
+        list = searchDemo.searchDemo("wangmengyi");
+
         System.out.println("初始化完成");
     }
     public  void initialVisual() throws Exception {

@@ -12,7 +12,7 @@ import static java.util.Collections.reverse;
 import static org.neo4j.driver.Values.parameters;
 
 /**
-草图转换为文件格式
+ 草图转换为文件格式
  */
 public class SearchCaoTuDemo {
     private  ArrayList<String> searches = new ArrayList<>();//地物类型
