@@ -14,10 +14,10 @@ import com.esri.arcgis.geodatabase.*;
 import com.esri.arcgis.geometry.Envelope;
 import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
-import com.neo4j.SearchDemo7;
 
 import com.neo4j.SearchDemo9;
-import com.neo4j.caotu.SearchCaoTuDemo1;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -31,10 +31,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author JXS
+ */
 @Component
+@Slf4j
 public class EngineVisualBeans {
 
-    Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
+
+    public Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
 
     //从neo4j获取的数据
     private static ArrayList<String[]> list = null;
@@ -53,9 +58,10 @@ public class EngineVisualBeans {
 
 
         SearchDemo9 searchDemo = new SearchDemo9();
-        list = searchDemo.searchDemo("wangmengyi");
+        list = searchDemo.searchDemo("chenhui");
 
         System.out.println("初始化完成");
+        log.info("初始化完成");
     }
     public  void initialVisual() throws Exception {
         //ae许可初始化
@@ -86,7 +92,7 @@ public class EngineVisualBeans {
         MapBean map = mapTemp.getMap(PathCommon.caoTuName); //地图容器
 
         //TODO 根据输入的草图名称去选择草图视图。
-        MapBean caoTuMap  = mapTemp.getMap("caixiangyu.mxd"); //草图
+        MapBean caoTuMap  = mapTemp.getMap("chenhui.mxd"); //草图
 
 
         //创建工具栏可视化组件并添加标准ESRI工具和命令。
@@ -418,6 +424,7 @@ public IEnvelope setExtent(IEnvelope extent) throws IOException {
             // Get the selected name from the combo box
             name =  (String) nameComboBox.getSelectedItem();
             // Do something with the selected name (e.g., assign it to a variable)
+            log.info("选择的图层:{}",name);
             System.out.println("选择的图层: " + name);
         }
         return name;
