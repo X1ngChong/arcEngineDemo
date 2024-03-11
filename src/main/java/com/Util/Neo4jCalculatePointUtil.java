@@ -1,5 +1,7 @@
 package com.Util;
 
+import com.Bean.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +25,22 @@ public class Neo4jCalculatePointUtil {
         temp.add(y);
 
         return  temp ;
+    }
+
+    /**
+     * 计算中心点转换为本地的Point
+     * @param bbox
+     * @return
+     */
+    public static Point calculateCenterAsPoint(List<Object> bbox) {
+        double  longitude1 = (double) bbox.get(0);
+        double latitude1 =  (double) bbox.get(1);
+        double longitude2 =  (double) bbox.get(2);
+        double latitude2 =  (double) bbox.get(3);
+
+        double x = (longitude1 + longitude2) / 2;
+        double y = (latitude1 + latitude2) / 2;
+
+        return new Point(x,y);
     }
 }
