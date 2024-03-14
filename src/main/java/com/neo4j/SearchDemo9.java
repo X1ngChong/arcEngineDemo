@@ -28,7 +28,12 @@ public class SearchDemo9 {
 
     public static void main(String[] args) {
         SearchDemo9 searchDemo9 = new SearchDemo9();
-        searchDemo9.searchDemo("chenhui");
+        ArrayList<String[]> chenhui = searchDemo9.searchDemo("chenhui");
+
+        for (int i = 0; i < chenhui.size(); i++) {
+            System.out.println(Arrays.toString(chenhui.get(i)));
+        }
+
     }
     public   ArrayList<String[]> searchDemo(String labelName) {
         SearchCaoTuDemo1 searchCaoTuDemo1 = new SearchCaoTuDemo1(labelName);

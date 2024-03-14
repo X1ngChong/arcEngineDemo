@@ -17,6 +17,7 @@ public class SearchCaoTuDemo1 {
 
 
 
+
     private  ArrayList<String> searches = new ArrayList<>();//地物类型
 
     private  ArrayList<List> bbox = new ArrayList<>();//searches的地物坐标

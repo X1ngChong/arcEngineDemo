@@ -38,7 +38,6 @@ import java.util.Set;
 @Slf4j
 public class EngineVisualBeans {
 
-
     public Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
 
     //从neo4j获取的数据

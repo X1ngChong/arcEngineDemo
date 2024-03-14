@@ -3,8 +3,10 @@ package com.Service.impl;
 import com.Common.DriverCommon;
 import com.Service.Neo4jService;
 import org.neo4j.driver.*;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class Neo4jServiceImpl implements Neo4jService {
 
     /**
