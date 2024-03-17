@@ -1,21 +1,28 @@
 package com.neo4j.caotu;
 
+import com.Bean.Line;
+import com.Bean.Point;
 import com.Common.DriverCommon;
+import com.Util.CalIntersect;
 import com.Util.CalculateLocation;
+import com.Util.Neo4jCalculatePointUtil;
 import org.neo4j.driver.*;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 /**
  * 将草图转化为标志性地物
  */
+
 public class SearchCaoTuDemo1 {
     public static void main(String[] args) {
-        SearchCaoTuDemo1 s = new SearchCaoTuDemo1("huanjing ");
+        SearchCaoTuDemo1 s = new SearchCaoTuDemo1("chenhui ");
     }
     private final Integer number = 3;//设置初始的筛选地物数量
 
 
+    private ArrayList<Boolean> roadRelation = new ArrayList<>();//[false, true, false] 地物之间是否有道路通过 最后一个默认是false
 
 
     private  ArrayList<String> searches = new ArrayList<>();//地物类型
@@ -23,6 +30,8 @@ public class SearchCaoTuDemo1 {
     private  ArrayList<List> bbox = new ArrayList<>();//searches的地物坐标
 
     private  ArrayList<String> positions = new ArrayList<>();//方位关系
+
+    private  ArrayList<List> roadBox = new ArrayList<>();//道路坐标
 
     private List<String> landmarkTypes = new ArrayList<>(); // 标志性地物类型
     private Map<String, Integer> landmarkTypeCount = new HashMap<>(); // 标志性地物类型及其数量
@@ -75,8 +84,8 @@ public class SearchCaoTuDemo1 {
                             Record record = result2.next();
                             List<Object> box1 = record.get("box").asList();
                             if (!uniqueBbox.contains(box1)) { // 检查是否已经存在相同的 bbox
-                                bbox.add(box1);
                                 uniqueBbox.add(box1); // 将 bbox 添加到 Set 中
+                                bbox.add(box1);
                             }
                         }
                     }
@@ -92,6 +101,58 @@ public class SearchCaoTuDemo1 {
                         }
                     }
                //     System.out.println(positions.toString());
+
+
+
+                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化
+
+
+                    //先获取所有道路数据
+                    String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
+                    Result result3 = tx.run(cypherQuery3);
+                    while (result3.hasNext()) {
+                        Record record3 = result3.next();
+                        List box1 = record3.get("box").asList();
+                        roadBox.add(box1);//所有道路坐标的获取
+                    }
+                    System.out.println(roadBox.size());
+
+                    //循环判断 是否有道路通过 如果有就下一个 如果没有就一直循环
+                    for (int i = 0; i < bbox.size(); i++) {
+                        Point p1, p2;
+                        Line line1;
+                        if (i < bbox.size() - 1) {
+                            p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i));
+                            p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i + 1));
+                        } else {
+                            //最后一个默认添加false 因为最后一个是为了筛选
+//                            p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(bbox.size() - 1));
+//                            p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(0));
+                            roadRelation.add(false);
+                            break;
+                        }
+                        line1 = new Line(p1, p2); // 地物之间的线段
+
+                        boolean isIntersecting = false; // 标记当前地物是否与任何道路相交
+                        for (int k = 0; k < roadBox.size(); k++) {
+                            List road = roadBox.get(k);
+                            Point r1 = new Point((Double) road.get(0), (Double) road.get(1)); // 修正Point对象的创建
+                            Point r2 = new Point((Double) road.get(2), (Double) road.get(3)); // 修正Point对象的创建
+                            Line line2 = new Line(r1, r2);
+
+                            isIntersecting = CalIntersect.doLinesIntersect(line1, line2);
+                            if (isIntersecting) {
+                                roadRelation.add(true);
+                                break; // 如果有交点，跳出内层循环
+                            }
+                        }
+                        // 检查完所有道路后，如果还没有交点，则添加false
+                        if (!isIntersecting) {
+                            roadRelation.add(false);
+                        }
+                    }
+
+//                    System.out.println(roadRelation.toString());
 
                     // 提交事务
                     tx.commit();
@@ -127,16 +188,14 @@ public class SearchCaoTuDemo1 {
         return searches;
     }
 
-    public void setSearches(ArrayList<String> searches) {
-        this.searches = searches;
-    }
-
     public ArrayList<String> getPositions() {
         return positions;
     }
 
-    public void setPositions(ArrayList<String> positions) {
-        this.positions = positions;
+
+    public ArrayList<Boolean> getRoadRelation() {
+        return roadRelation;
     }
+
 
 }

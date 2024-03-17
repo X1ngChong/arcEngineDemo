@@ -9,5 +9,8 @@ public class PathCommon {
 
     public static final  String caoTuName="xianlin.mxd";//草图名称
 
+    public static final  String caoTuLabel="xianlin";//草图label
+
+
 
 }

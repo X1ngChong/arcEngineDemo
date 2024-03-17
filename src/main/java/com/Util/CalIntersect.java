@@ -5,7 +5,7 @@ import com.Bean.Line;
 import com.Bean.Point;
 
 /**
- * @author JXS
+ * @author JXS 判断两个道路之间是否有道路
  */
 public class CalIntersect {
 
