@@ -106,7 +106,6 @@ public class SearchCaoTuDemo1 {
 
                     //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化
 
-
                     //先获取所有道路数据
                     String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
                     Result result3 = tx.run(cypherQuery3);
@@ -121,16 +120,14 @@ public class SearchCaoTuDemo1 {
                     for (int i = 0; i < bbox.size(); i++) {
                         Point p1, p2;
                         Line line1;
-                        if (i < bbox.size() - 1) {
-                            p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i));
-                            p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i + 1));
-                        } else {
-                            //最后一个默认添加false 因为最后一个是为了筛选
-//                            p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(bbox.size() - 1));
-//                            p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(0));
+                        if (i >= bbox.size() - 1) {
                             roadRelation.add(false);
                             break;
                         }
+
+                        p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i));
+                        p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i + 1));
+
                         line1 = new Line(p1, p2); // 地物之间的线段
 
                         boolean isIntersecting = false; // 标记当前地物是否与任何道路相交

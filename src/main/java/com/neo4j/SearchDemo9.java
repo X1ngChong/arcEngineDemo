@@ -31,7 +31,15 @@ public class SearchDemo9 {
 
     public static void main(String[] args) {
         SearchDemo9 searchDemo9 = new SearchDemo9();
-        ArrayList<String[]> chenhui = searchDemo9.searchDemo("chenhui");
+        ArrayList<String[]> test = searchDemo9.searchDemo("zhangpengtao");
+
+        for (String [] t1:test
+             ) {
+            //原始结果集中有这个数据 但是筛选完后没有了 原因可能是wangmengyi的road没有做切分
+            if("'265949063'".equals(t1[0])){
+                System.out.println("包含");
+            }
+        }
 
     }
     public   ArrayList<String[]> searchDemo(String labelName) {
@@ -58,10 +66,9 @@ public class SearchDemo9 {
 
                     log.info("原始的结果集长度:{}",list.size());
                     //进行结果集二次筛选
-                     list = secondFilter(roadRelation, list);
+                    secondFilter(driver,roadRelation, list);
 
                     log.info("筛选后的结果集长度:{}",list.size());
-
 
                     // 提交事务
                     tx.commit();
@@ -70,6 +77,7 @@ public class SearchDemo9 {
                     // 在这里关闭Driver，即使发生异常也会执行
                     try {
                         driver.close();
+                        driverCommon.close();
                     } catch (Exception ex) {
                         log.error("neo4j驱动关闭失败", ex);
                     }
@@ -203,10 +211,9 @@ public class SearchDemo9 {
         return result;
     }
 
-    private  ArrayList<String[]> secondFilter(Boolean[] roadRelation, ArrayList<String[]> list){
+    private  ArrayList<String[]> secondFilter(Driver driver,Boolean[] roadRelation, ArrayList<String[]> list){
         String labelName = PathCommon.caoTuLabel;//  需要去查询的图层
-        try (DriverCommon driverCommon = new DriverCommon()) {
-            Driver driver = driverCommon.getGraphDatabase();
+
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {
                     List<Integer> toRemove = new ArrayList<>(); // 创建一个列表来存储需要移除的元素的索引
@@ -224,15 +231,14 @@ public class SearchDemo9 {
 
                             Map<String, Object> parameters = new HashMap<>();
                             // 创建一个参数映射
-                            if (k < strings.length - 1) {
-                                parameters.put("osmid1", strings[k].split("'")[1]);// '99661839'
-                                parameters.put("osmid2", strings[k + 1].split("'")[1]); //'118862383'
-                            }else {
-                                //如果是最后一次查询就默认相同 不检查最后一个和第一个地物的道路关系
-//                                parameters.put("osmid1", strings[k].split("'")[1]);
-//                                parameters.put("osmid2", strings[0].split("'")[1]);
+
+                            if (k >= strings.length - 1) {
                                 break;
                             }
+                            parameters.put("osmid1", strings[k].split("'")[1]);// '99661839'
+                            parameters.put("osmid2", strings[k + 1].split("'")[1]); //'118862383'
+
+
                             //TODO:加入roadRelation
                             Result result = tx.run(cypherQuery2,parameters);
                             while(result.hasNext()){
@@ -245,15 +251,16 @@ public class SearchDemo9 {
                         }
                     }
 
-
-                    for (int i = toRemove.size() - 1; i >= 0; i--) {
-                        list.remove(toRemove.get(i).intValue()); //进行移除
+                    for (int i = toRemove.size() - 1; i >= 0; i--) { // 注意这里是 i >= 0
+                        int indexToRemove = toRemove.get(i);
+                        if (indexToRemove < list.size()) { // 确保索引在列表范围内
+                            list.remove(indexToRemove); // 进行移除
+                        }
                     }
 
                     // 提交事务
                     tx.commit();
-                }
-                driver.close();
+                
             }
         }
 

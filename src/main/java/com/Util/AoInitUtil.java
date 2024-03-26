@@ -1,6 +1,7 @@
 package com.Util;
 
 
+import com.Common.InfoCommon;
 import com.esri.arcgis.system.AoInitialize;
 import com.esri.arcgis.system.EngineInitializer;
 import com.esri.arcgis.system.esriLicenseProductCode;
@@ -26,7 +27,7 @@ public class AoInitUtil {
 
         // 第一个参数是arcgis产品编号：1=desktop，2=engine，5=server
         // 此参数可以通过枚举查看esriProductCode
-        boolean s = versionManager.loadVersion(1, "10.2");
+        boolean s = versionManager.loadVersion(1, InfoCommon.arcgisVersion);
 
         aoInit = new AoInitialize();
 

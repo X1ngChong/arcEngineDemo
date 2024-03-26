@@ -34,14 +34,17 @@ import java.util.Set;
 /**
  * @author JXS
  */
-@Component
 @Slf4j
 public class EngineVisualBeans {
+
 
     public Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
 
     //从neo4j获取的数据
-    private static ArrayList<String[]> list = null;
+    private  ArrayList<String[]> list = null;
+     private JFrame frame;//frame主窗口
+
+    private JDialog popupDialog;//剩余列表弹窗
     private static  MapBean map;
     private static Integer index = 0;//当前数据的下标
 
@@ -51,18 +54,7 @@ public class EngineVisualBeans {
 
      private static JDialog caoTuLog = new JDialog();
 
-    static{
-        System.out.println("初始化中");
-      //   list = SearchDemo7.searchDemo();
-
-
-        SearchDemo9 searchDemo = new SearchDemo9();
-        list = searchDemo.searchDemo("chenhui");
-
-        System.out.println("初始化完成");
-        log.info("初始化完成");
-    }
-    public  void initialVisual() throws Exception {
+    public  void initialVisual(String labelName) throws Exception {
         //ae许可初始化
         AoInitialize aoInit = null;
         AoInitUtil aoInitUtil = new AoInitUtil();
@@ -74,14 +66,26 @@ public class EngineVisualBeans {
             return;
         }
 
-         map = initView();//完成可视化界面
-        showData(index);
-        System.out.println("总共有:"+list.size()+"条数据");
+        log.info("初始化中");
 
-        //獲取圖層下所有地圖的類要素
+        SearchDemo9 searchDemo = new SearchDemo9();
+
+        //TODO chenhui草图可以查询 其他几个有问题！！！！  地物道路
+
+        // list = searchDemo.searchDemo("zhangpengtao");
+        list = searchDemo.searchDemo(labelName);
+
+
+        log.info("初始化完成");
+
+
+         map = initView(labelName);//完成可视化界面
+        showData(index);
+        log.info("总共有:{}条数据",list.size());
+
     }
 
-    public MapBean initView() throws IOException {
+    public MapBean initView(String labelName) throws IOException {
         /**
          * 可視化處理
          */
@@ -91,7 +95,7 @@ public class EngineVisualBeans {
         MapBean map = mapTemp.getMap(PathCommon.caoTuName); //地图容器
 
         //TODO 根据输入的草图名称去选择草图视图。
-        MapBean caoTuMap  = mapTemp.getMap("chenhui.mxd"); //草图
+        MapBean caoTuMap  = mapTemp.getMap(labelName+".mxd"); //草图
 
 
         //创建工具栏可视化组件并添加标准ESRI工具和命令。
@@ -115,11 +119,7 @@ public class EngineVisualBeans {
 
 
         // 创建剩余列表弹窗窗口
-        JDialog popupDialog = new JDialog(); // 创建一个新的弹窗窗口实例
-
-
-        // 创建草图弹窗口
-//        JDialog caoTuLog = new JDialog(); // 创建一个新的弹窗窗口实例
+         popupDialog = new JDialog(); // 创建一个新的弹窗窗口实例
 
         //初始化列表
         for (int i = 0; list.size() >= 10 ? i < 10 :  i< list.size(); i++) {
@@ -229,21 +229,26 @@ public class EngineVisualBeans {
         // Create a button to trigger the name selection dialog
         JButton selectNameButton = new JButton("请选择草图");
         selectNameButton.addActionListener(new ActionListener() {
-            @Override                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+            @Override
             public void actionPerformed(ActionEvent e) {
                 // 显示新的弹窗
                 String name = showNameSelectionDialog(); // 获取选中的草图名称
-//                list = SearchDemo7.searchDemo(name);
-                 caoTuLog = JPanelUtil.updateCaoTuLogMap(caoTuMap, mapTemp, caoTuLog, name + ".mxd", toolbar2);
-//                 index = 0;
-//                JPanelUtil.updatePanel(panel,list,index,neo4jService);
+                caoTuLog = JPanelUtil.updateCaoTuLogMap(caoTuMap, mapTemp, caoTuLog, name + ".mxd", toolbar2);
+
+                try {
+                    frame.dispose();
+                    popupDialog.dispose();
+                    initialVisual(name);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
 
             }
         });
         selectNameButton.setBounds(150, 300, 120, 30);
 
         //构建 frame.
-        JFrame frame = new JFrame("Arcgis Engine");
+        frame = new JFrame("Arcgis Engine");
 
         showDataButton.setBounds(150, 150, 120, 30);
         frame.add(showDataButton);
@@ -404,8 +409,6 @@ public IEnvelope setExtent(IEnvelope extent) throws IOException {
             throw new RuntimeException(e);
         }
 
-//        // Create an array of possible names (adjust this based on your data)
-//        String[] possibleNames = {"Name1", "Name2", "Name3"};
 
         // Create a combo box with the possible names
         JComboBox<String> nameComboBox = new JComboBox<>(possibleNames);

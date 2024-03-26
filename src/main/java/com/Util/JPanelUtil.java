@@ -50,7 +50,6 @@ public class JPanelUtil {
 
         caoTuLogMap = mapTemp.getMap(mapFileName); // 加载新的地图
 
-//        JDialog caoTuLogTemp = new JDialog();
 
         try {
 
