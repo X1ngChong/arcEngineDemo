@@ -46,7 +46,7 @@ public class EngineVisualBeans {
 
     private JDialog popupDialog;//剩余列表弹窗
     private static  MapBean map;
-    private static Integer index = 0;//当前数据的下标
+    private  Integer index = 0;//当前数据的下标
 
     private static boolean extentSet = false;
 
@@ -238,6 +238,7 @@ public class EngineVisualBeans {
                 try {
                     frame.dispose();
                     popupDialog.dispose();
+                    index = 0; //初始化下标
                     initialVisual(name);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);

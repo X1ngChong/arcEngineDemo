@@ -108,7 +108,7 @@ public class CalculateLocation {
     }
 
     /**
-     * 明显方位
+     * 明显方位             ******
      * @param bbox1
      * @param bbox2
      * @return
@@ -123,8 +123,8 @@ public class CalculateLocation {
         // 计算两点之间的斜率
         double slope = (center1[0] - center2[0]) / (center1[1] - center2[1]);
 
-        // 如果斜率的绝对值大于1，则认为明显在东西方位
-        if (Math.abs(slope) > 1.4) {
+        // 如果斜率的绝对值大于1.4，则认为明显在东西方位
+        if (Math.abs(slope) > 1.3) {
             if(center1[0] - center2[0] < 0 ){
                 result += "东";
             }
@@ -132,7 +132,7 @@ public class CalculateLocation {
                 result += "西";
             }
         }
-        // 如果斜率的绝对值小于1，则认为明显在南北方位
+        // 如果斜率的绝对值小于0.7，则认为明显在南北方位
         else if(Math.abs(slope) < 0.7){
             if(center1[1] - center2[1] < 0 ){
                 result += "北";
