@@ -42,14 +42,15 @@ public class SearchCaoTuDemo1 {
     }
 
     public void searchDemo(String labelName) {
-        try (DriverCommon driverCommon = new DriverCommon()) {
-            Driver driver = driverCommon.getGraphDatabase();
+        try (DriverCommon driverCommon = new DriverCommon();
+             Driver driver = driverCommon.getGraphDatabase()) {
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {
                     // 查询三个最常见的标志性地物类型
                     String cypherQuery = "MATCH (n:" + labelName + ") WHERE n.Type <> 'road' RETURN n.Type AS type, COUNT(n) AS count ORDER BY count ASC LIMIT 3";
                     Result result = tx.run(cypherQuery);
                     List<Record> landmarkRecords = result.list();
+
                     // 将标志性地物类型及其数量存储到地物类型关系的Map中
                     for (Record record : landmarkRecords) {
                         String type = record.get("type").asString();
@@ -57,6 +58,7 @@ public class SearchCaoTuDemo1 {
                         landmarkTypes.add(type);
                         landmarkTypeCount.put(type, count);
                     }
+
                     // 将标志性地物类型按数量倒序排列
                     landmarkTypes.sort((t1, t2) -> landmarkTypeCount.get(t2) - landmarkTypeCount.get(t1));
                     // 构造地物类型关系
@@ -150,11 +152,15 @@ public class SearchCaoTuDemo1 {
                     }
 
 //                    System.out.println(roadRelation.toString());
-
                     // 提交事务
                     tx.commit();
+
                 }
-                driver.close();
+                finally {
+                    session.close();
+                    driver.close();
+                    driverCommon.close();
+                }
             }
         }
     }

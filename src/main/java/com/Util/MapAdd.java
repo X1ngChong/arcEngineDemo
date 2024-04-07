@@ -5,14 +5,15 @@ import com.Common.PathCommon;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.carto.*;
 import com.esri.arcgis.geodatabase.*;
+import lombok.extern.slf4j.Slf4j;
 
 
-
+@Slf4j
 public class MapAdd {
 
     public MapBean getMap(String mxdPath) {
         mxdPath = PathCommon.caoTuFileName+"/"+mxdPath;
-        System.out.println(mxdPath);
+        log.info("地图路径:{}",mxdPath);
         MapBean map = new MapBean(); //地图容器
         initMaps(map,mxdPath);
         return map;
@@ -29,16 +30,6 @@ public class MapAdd {
             // 获取地图文档中的地图
             IMap mapDemo = mapDocument.getMap(0); // 这里的0表示第一个地图
 
-//            // 要读取的 Shapefile 文件路径
-//            String shapefilePath = "D:\\arc\\nanshi";
-//            IWorkspace workspace  =  WorkspaceService.getWorkspace(shapefilePath);//初始化WorkspaceService
-//
-//            List<IFeatureClass> allFeatureClass = LeiYaoSuUtil.getAllFeatureClass(workspace, mapDemo);//获取所有的元素
-//
-//            for(int i = 0;i<allFeatureClass.size();i++){
-//                LeiYaoSuUtil.displayAllAttributes(allFeatureClass.get(i));
-//                System.out.println("第"+ (i+1) +"个图遍历完成***************");
-//            }
             // 将地图添加到地图控件中
             map.setMapByRef(mapDemo);
         }

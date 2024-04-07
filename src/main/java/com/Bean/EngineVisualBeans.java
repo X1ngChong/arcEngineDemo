@@ -17,8 +17,6 @@ import com.esri.arcgis.system.AoInitialize;
 
 import com.neo4j.SearchDemo9;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 import javax.swing.*;
@@ -46,7 +44,7 @@ public class EngineVisualBeans {
 
     private JDialog popupDialog;//剩余列表弹窗
     private static  MapBean map;
-    private  Integer index = 0;//当前数据的下标
+    private  static Integer index = 0;//当前数据的下标
 
     private static boolean extentSet = false;
 

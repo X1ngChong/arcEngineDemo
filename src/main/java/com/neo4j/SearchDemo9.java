@@ -70,18 +70,24 @@ public class SearchDemo9 {
 
                     log.info("筛选后的结果集长度:{}",list.size());
 
-                    // 提交事务
+                    // 提交事务,这是筛选
                     tx.commit();
+                }catch (Exception ex) {
+                    log.error("数据筛选失败", ex);
                 }
                 finally {
                     // 在这里关闭Driver，即使发生异常也会执行
                     try {
+                        session.close();
                         driver.close();
-                        driverCommon.close();
+                       driverCommon.close();
                     } catch (Exception ex) {
                         log.error("neo4j驱动关闭失败", ex);
                     }
                 }
+        }
+        catch (Exception ex) {
+            log.error("neo4j驱动关闭失败", ex);
         }
         return list;
     }
