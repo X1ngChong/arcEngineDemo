@@ -269,14 +269,14 @@ public class EngineVisualBeans {
 
 
         frame.setSize(1000,1000);
-        frame.setLocation(400,200);
+        frame.setLocation(800,200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
 
         popupDialog.setTitle("剩余列表"); // 设置弹窗标题
         popupDialog.setSize(400, 400); // 设置弹窗大小，根据需要调整大小和形状等属性
-        popupDialog.setLocation(200,400);
+        popupDialog.setLocation(200,600);
         popupDialog.getContentPane().add(panel); // 将标签添加到弹窗中
         popupDialog.setVisible(true); // 显示弹窗窗口
 
@@ -284,7 +284,7 @@ public class EngineVisualBeans {
         caoTuLog.add(toolbar2,BorderLayout.NORTH);
         caoTuLog.setTitle("草图视图"); // 设置弹窗标题
         caoTuLog.setSize(500, 500); // 设置弹窗大小，根据需要调整大小和形状等属性
-        caoTuLog.setLocation(200,200);
+        caoTuLog.setLocation(200,100);
         caoTuLog.setVisible(true);// 显示弹窗窗口
 
 
