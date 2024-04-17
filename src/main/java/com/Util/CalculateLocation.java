@@ -1,12 +1,17 @@
 package com.Util;
 
+import com.Bean.Point;
+
 import java.util.List;
 
+/**
+ * @author JXS
+ */
 public class CalculateLocation {
 
     public static double[] calculateCenterPoint(List<Object> bbox) {
         if (bbox == null || bbox.size() != 4) {
-            throw new IllegalArgumentException("Invalid bbox format");
+            throw new IllegalArgumentException("bbox 内容未初始化");
         }
 
         // 解析 bbox 的坐标值
@@ -108,12 +113,12 @@ public class CalculateLocation {
     }
 
     /**
-     * 明显方位             ******
+     * 明显方位             ******  需要采用相离相交包含等关系去计算明显位置
      * @param bbox1
      * @param bbox2
      * @return
      */
-    public static String getDirection2(List<Object> bbox1, List<Object> bbox2)
+    public static String getDirection(List<Object> bbox1, List<Object> bbox2)
     {
         double[] center1 = calculateCenterPoint(bbox1);
         double[] center2 = calculateCenterPoint(bbox2);
@@ -146,4 +151,94 @@ public class CalculateLocation {
         }
         return result;
     }
+
+
+    /**
+     * 计算明显方位
+     * @param bbox1 第一个边界框
+     * @param bbox2 第二个边界框
+     * @return 明显方位结果，例如 "东"、"西"、"南"、"北" 等
+     */
+    public static String getDirection2(List<Object> bbox1, List<Object> bbox2) {
+        String result = "";
+
+        // 将第一个边界框的坐标转换为 Double[] 数组
+        Double[] bbox1Coords = convertToDoubleArray(bbox1);
+        // 将第二个边界框的坐标转换为 Double[] 数组
+        Double[] bbox2Coords = convertToDoubleArray(bbox2);
+
+        // 检查第二个边界框的所有点是否都在第一个边界框的右侧
+        boolean allPointsOnRight = true;
+        for (int i = 0; i < 2; i++) {
+            if (bbox2Coords[i] < bbox1Coords[i]) {
+                allPointsOnRight = false;
+                break;
+            }
+        }
+
+        // 如果第二个边界框的所有点都在第一个边界框的右侧，则认为明显在东方位
+        if (allPointsOnRight) {
+            result += "东";
+        } else {
+            boolean allPointsOnLeft = true;
+            // 检查第二个边界框的所有点是否都在第一个边界框的左侧
+            for (int i = 2; i < 4; i++) {
+                if (bbox2Coords[i] > bbox1Coords[i]) {
+                    allPointsOnLeft = false;
+                    break;
+                }
+            }
+            // 如果第二个边界框的所有点都在第一个边界框的左侧，则认为明显在西方位
+            if (allPointsOnLeft) {
+                result += "西";
+            }
+        }
+
+        // 检查第二个边界框的所有点是否都在第一个边界框的上方
+        boolean allPointsAbove = true;
+        for (int i = 2; i < 4; i++) {
+            if (bbox2Coords[i] < bbox1Coords[i]) {
+                allPointsAbove = false;
+                break;
+            }
+        }
+        // 如果第二个边界框的所有点都在第一个边界框的上方，则认为明显在北方位
+        if (allPointsAbove) {
+            result += "北";
+        } else {
+            boolean allPointsBelow = true;
+            // 检查第二个边界框的所有点是否都在第一个边界框的下方
+            for (int i = 0; i < 2; i++) {
+                if (bbox2Coords[i] > bbox1Coords[i]) {
+                    allPointsBelow = false;
+                    break;
+                }
+            }
+            // 如果第二个边界框的所有点都在第一个边界框的下方，则认为明显在南方位
+            if (allPointsBelow) {
+                result += "南";
+            }
+        }
+        if("".equals(result)){
+            result = getDirection(bbox1,bbox2);
+        }
+
+        return result;
+    }
+
+    /**
+     * 将 Object 类型的坐标列表转换为 Double[] 数组
+     * @param coords 坐标列表
+     * @return Double[] 数组
+     */
+    private static Double[] convertToDoubleArray(List<Object> coords) {
+        Double[] result = new Double[coords.size()];
+        for (int i = 0; i < coords.size(); i++) {
+            result[i] = (Double) coords.get(i);
+        }
+        return result;
+    }
+
+
+
 }

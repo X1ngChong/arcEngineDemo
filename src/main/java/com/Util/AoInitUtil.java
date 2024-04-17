@@ -11,11 +11,13 @@ import com.esri.arcgis.version.VersionManager;
 import java.io.IOException;
 
 
+/**
+ * @author JXS
+ */
 public class AoInitUtil {
     /**
      * 初始化ae
      * 初始化ae或许可失败，会报错或者返回null
-     * @param aoInit
      * @return
      */
     public AoInitialize initializeEngine(AoInitialize aoInit) throws IOException {
@@ -48,5 +50,6 @@ public class AoInitUtil {
 
         return aoInit;
     }
+
 }
 

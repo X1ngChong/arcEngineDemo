@@ -53,11 +53,10 @@ public class EngineVisualBeans {
      private static JDialog caoTuLog = new JDialog();
 
     public  void initialVisual(String labelName) throws Exception {
+
         //ae许可初始化
         AoInitialize aoInit = null;
         AoInitUtil aoInitUtil = new AoInitUtil();
-        //初始化ae
-        //初始化ae或许可失败，会报错或者返回null
         aoInit = aoInitUtil.initializeEngine(aoInit);
         if (aoInit == null) {
             JOptionPane.showMessageDialog(null, "ae初始化失败");
@@ -66,16 +65,18 @@ public class EngineVisualBeans {
 
         log.info("初始化中");
 
-        SearchDemo9 searchDemo = new SearchDemo9();
+        SearchDemo9 searchList = new SearchDemo9();
 
-        //TODO chenhui草图可以查询 其他几个有问题！！！！  地物道路
+        //TODO 草图数据
 
         // list = searchDemo.searchDemo("zhangpengtao");
-        list = searchDemo.searchDemo(labelName);
+        list = searchList.searchDemo(labelName);
+
+        ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
+        list = sorter.sortAndFilterList(list);
 
 
         log.info("初始化完成");
-
 
          map = initView(labelName);//完成可视化界面
         showData(index);

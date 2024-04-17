@@ -33,13 +33,13 @@ public class Neo4jCalculatePointUtil {
      * @return
      */
     public static Point calculateCenterAsPoint(List<Object> bbox) {
-        double  longitude1 = (double) bbox.get(0);
-        double latitude1 =  (double) bbox.get(1);
-        double longitude2 =  (double) bbox.get(2);
-        double latitude2 =  (double) bbox.get(3);
+        double  x1 = (double) bbox.get(0);
+        double y1 =  (double) bbox.get(1);
+        double x2 =  (double) bbox.get(2);
+        double y2 =  (double) bbox.get(3);
 
-        double x = (longitude1 + longitude2) / 2;
-        double y = (latitude1 + latitude2) / 2;
+        double x = (x1 + x2) / 2;
+        double y = (y1 + y2) / 2;
 
         return new Point(x,y);
     }

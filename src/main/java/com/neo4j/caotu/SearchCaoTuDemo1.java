@@ -73,8 +73,6 @@ public class SearchCaoTuDemo1 {
                   //      System.out.println(searches);
                     }  //完成searches数组的查找[pitch, pitch, building]
 
-                    //System.out.println(landmarkTypes.toString());
-                   // System.out.println(landmarkTypeCount.toString());
 
 
                     //TODO: 完成方位关系的查找   会重复查找后续优化可以修改
@@ -106,7 +104,7 @@ public class SearchCaoTuDemo1 {
 
 
 
-                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化
+                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化  *****好像判断有点问题***** 不能使用简单的bbox进行判断
 
                     //先获取所有道路数据
                     String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
@@ -127,8 +125,9 @@ public class SearchCaoTuDemo1 {
                             break;
                         }
 
-                        p1 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i));
-                        p2 = Neo4jCalculatePointUtil.calculateCenterAsPoint(bbox.get(i + 1));
+                        //这是俩点的线段
+                        p1 = new Point((Double) bbox.get(i).get(0),(Double) bbox.get(i).get(1));
+                        p2 = new Point((Double) bbox.get(i+1).get(0),(Double) bbox.get(i+1).get(1));
 
                         line1 = new Line(p1, p2); // 地物之间的线段
 

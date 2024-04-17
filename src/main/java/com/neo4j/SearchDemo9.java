@@ -3,7 +3,6 @@ package com.neo4j;
 import com.Common.DriverCommon;
 import com.Common.PathCommon;
 import com.Util.CalculateLocation;
-import com.neo4j.caotu.SearchCaoTuDemo;
 import com.neo4j.caotu.SearchCaoTuDemo1;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
@@ -12,7 +11,6 @@ import org.neo4j.driver.types.Node;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.Collections.reverse;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -94,13 +92,6 @@ public class SearchDemo9 {
 
     /**
      * 执行查询方法
-     * @param tx
-     * @param searches
-     * @param positions
-     * @param beginNode
-     * @param currentIndex
-     * @param
-     * @return
      */
     private  void runRecursiveQuery(Transaction tx, String[] searches, String[] positions, Node beginNode, int currentIndex,StringBuilder currentResult) {
         Result result;
@@ -174,12 +165,6 @@ public class SearchDemo9 {
 
     /**
      * 构建查询语句
-     * @param tx
-     * @param search
-     * @param search2
-     * @param position
-     * @param beginNode
-     * @return
      */
     private  Result runQuery(Transaction tx, String search, String search2, String position, Node beginNode) {
         StringBuilder cypherQuery = new StringBuilder();
@@ -223,18 +208,15 @@ public class SearchDemo9 {
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {
                     List<Integer> toRemove = new ArrayList<>(); // 创建一个列表来存储需要移除的元素的索引
-                    for (int i = 0 ;i<list.size();i++){
+                    int listSize = list.size();
+                    for (int i = 0 ;i<listSize;i++){
                         String[] strings = list.get(i);
                         for(int k = 0;k<strings.length;k++) {
-                            // 使用参数化查询
-//                            String cypherQuery = " MATCH " +
-//                                    " (n1:"+labelName+" {osm_id: $osmid1})-[r:NEAR]-> (n2:"+labelName+" {osm_id: $osmid2}) " +
-//                                    "   RETURN r,r.line AS line";
                             String cypherQuery2 = "MATCH " +
-                                    "(n1:xianlin {osm_id: $osmid1 })-[r:NEAR]->(n2:xianlin {osm_id: $osmid2 }) " +
-                                    " RETURN r,r.line AS line";
-                            //语句有错误修改完成 使用parameters传入的参数是 "'123321'" 带俩个双引号的数据
+                                    "(n1:"+labelName+"{osm_id: $osmid1 })-[r:NEAR]->(n2:"+labelName+" {osm_id: $osmid2 }) " +
+                                    " RETURN r,r.line AS line limit 1";
 
+                            //语句有错误修改完成 使用parameters传入的参数是 "'123321'" 带俩个双引号的数据
                             Map<String, Object> parameters = new HashMap<>();
                             // 创建一个参数映射
 
@@ -245,12 +227,22 @@ public class SearchDemo9 {
                             parameters.put("osmid2", strings[k + 1].split("'")[1]); //'118862383'
 
 
-                            //TODO:加入roadRelation
+                            //TODO:加入roadRelation  这里的判断把原来有的数据筛选没了
                             Result result = tx.run(cypherQuery2,parameters);
                             while(result.hasNext()){
-                                Boolean boolen = !result.next().get("line").asString().contains("null");//结果集的line不为空
-                                if (!boolen.equals(roadRelation[k])){//当俩个有一个不相等的时候就移除
-                                    toRemove.add(i);
+                                Boolean boolen = !result.next().get("line").asString().contains("null");//结果集的line不为空 代表为true 否则为false
+//                                if (!boolen.equals(roadRelation[k])){//当俩个有一个不相等的时候就移除
+//                                    if (Arrays.toString(list.get(i)).contains("265948702")){
+//                                        System.out.println(Arrays.toString(list.get(i)));
+//                                    }
+//                                    toRemove.add(i);
+//                                    break;
+//                                }
+                                if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就再次添加
+                                    if (Arrays.toString(list.get(i)).contains("265948702")){
+                                        System.out.println(Arrays.toString(list.get(i)));
+                                    }
+                                    list.add(list.get(i));
                                     break;
                                 }
                             }
@@ -259,7 +251,7 @@ public class SearchDemo9 {
 
                     for (int i = toRemove.size() - 1; i >= 0; i--) { // 注意这里是 i >= 0
                         int indexToRemove = toRemove.get(i);
-                        if (indexToRemove < list.size()) { // 确保索引在列表范围内
+                        if (indexToRemove < list.size()) {// 确保索引在列表范围内
                             list.remove(indexToRemove); // 进行移除
                         }
                     }

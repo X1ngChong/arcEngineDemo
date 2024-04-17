@@ -43,10 +43,10 @@ public class CalIntersect {
 
     public static void main(String[] args) {
         // 定义四个点，形成两条直线
-        Point p1 = new Point(118.86775669923097, 32.06550953814714);
-        Point p2 = new Point(118.94868140000003, 32.117768600000005);
-        Point p3 = new Point(1, 0);
-        Point p4 = new Point(2, 1);
+        Point p1 = new Point(13236874.202,  3778738.291);
+        Point p2 = new Point(13237042.477, 3778476.353);
+        Point p3 = new Point(13236897.740247138, 3778282.4564591646);
+        Point p4 = new Point(13236910.92108567, 3778887.7557525933);
 
         Line line1 = new Line(p1, p2);
         Line line2 = new Line(p3, p4);

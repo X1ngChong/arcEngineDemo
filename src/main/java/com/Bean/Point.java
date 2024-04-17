@@ -1,5 +1,11 @@
 package com.Bean;
 
+import lombok.Data;
+
+/**
+ * @author JXS
+ */
+@Data
 public class Point {
     public double x;
     public double y;

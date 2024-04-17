@@ -48,32 +48,19 @@ public class AddNearRelation {
                             double distance = CalculateDistanceByBboxUtil.calculate(box, box2);
                             System.out.println("距离:  "+distance);
 
-//                            // 如果距离小于200，添加或删除 "NEAR" 关系
-                            if (distance < 100) {
-//                                // 添加 "NEAR" 关系
-                                /**
-                                 * 删除当前添加的关系
-                                 */
-//                            tx2.run("MATCH (n1)-[r:NEAR]->(n2) " +
-//                                    "WHERE ID(n1) = $id1 AND ID(n2) = $id2 " +
-//                                    "DELETE r", parameters("id1", node.id(), "id2", node2.id()));
-//                            System.out.println("删除成功");
+                             // 如果距离小于200，添加或删除 "NEAR" 关系
+                            if (distance < 300) {
 
-                                /**
-                                 * 添加关系
+                                /*
+                                  删除当前添加的关系
                                  */
-                                tx2.run("MATCH (n1), (n2) " +
-                                        " WHERE ID(n1) = $id1 AND ID(n2) = $id2" +
-//                                        " AND NOT EXISTS((n1)-[:Near]-(n2)) " +
-//                                        " AND NOT EXISTS((n2)-[:Near]-(n2)) " +
-                                        " CREATE (n1)-[:NEAR {location : '" + location + "'}]->(n2) ", parameters("id1", node.id(), "id2", node2.id()));
-                                System.out.println("添加成功");
-                            }
-//                             else {
-////                                // 删除 "NEAR" 关系
-////                                innerTx.run("MATCH (n)-[r:NEAR]-(m) DELETE r");
-//                                System.out.println("不执行  删除   ");
-//                            }
+                                //delNearRelation(tx2,node,node2);
+
+                                /*
+                                  添加关系
+                                 */
+                                addNearRelation(tx2,node,node2,location);
+                                }
                             }
                             tx2.commit();
                         }
@@ -83,6 +70,28 @@ public class AddNearRelation {
             }
         }
 
+    }
+
+    public static void addNearRelation(Transaction tx2,Node node,Node node2, String location){
+        /**
+         * 添加关系
+         */
+        tx2.run("MATCH (n1), (n2) " +
+                " WHERE ID(n1) = $id1 AND ID(n2) = $id2" +
+//                                        " AND NOT EXISTS((n1)-[:Near]-(n2)) " +
+//                                        " AND NOT EXISTS((n2)-[:Near]-(n2)) " +
+                " CREATE (n1)-[:NEAR {location : '" + location + "'}]->(n2) ", parameters("id1", node.id(), "id2", node2.id()));
+        System.out.println("添加成功");
+    }
+
+    public static void delNearRelation(Transaction tx2,Node node,Node node2){
+        /**
+         * 删除当前添加的关系
+         */
+        tx2.run("MATCH (n1)-[r:NEAR]->(n2) " +
+                "WHERE ID(n1) = $id1 AND ID(n2) = $id2 " +
+                "DELETE r", parameters("id1", node.id(), "id2", node2.id()));
+        System.out.println("删除成功");
     }
 
 }
