@@ -198,7 +198,6 @@ public class SearchDemo9 {
             result = tx.run(cypherQuery.toString());
         }
 
-//        System.out.println(cypherQuery);
         return result;
     }
 
@@ -238,7 +237,7 @@ public class SearchDemo9 {
 //                                    toRemove.add(i);
 //                                    break;
 //                                }
-                                if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就再次添加
+                                if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就 再次添加
                                     if (Arrays.toString(list.get(i)).contains("265948702")){
                                         System.out.println(Arrays.toString(list.get(i)));
                                     }

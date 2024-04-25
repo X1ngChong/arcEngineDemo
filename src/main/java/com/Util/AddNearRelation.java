@@ -59,7 +59,12 @@ public class AddNearRelation {
                                 /*
                                   添加关系
                                  */
-                                addNearRelation(tx2,node,node2,location);
+                              //  addNearRelation(tx2,node,node2,location);
+
+                                /*
+                                修改关系
+                                 */
+                                changeLocation(tx2,node,node2,location);
                                 }
                             }
                             tx2.commit();
@@ -78,8 +83,6 @@ public class AddNearRelation {
          */
         tx2.run("MATCH (n1), (n2) " +
                 " WHERE ID(n1) = $id1 AND ID(n2) = $id2" +
-//                                        " AND NOT EXISTS((n1)-[:Near]-(n2)) " +
-//                                        " AND NOT EXISTS((n2)-[:Near]-(n2)) " +
                 " CREATE (n1)-[:NEAR {location : '" + location + "'}]->(n2) ", parameters("id1", node.id(), "id2", node2.id()));
         System.out.println("添加成功");
     }
@@ -92,6 +95,16 @@ public class AddNearRelation {
                 "WHERE ID(n1) = $id1 AND ID(n2) = $id2 " +
                 "DELETE r", parameters("id1", node.id(), "id2", node2.id()));
         System.out.println("删除成功");
+    }
+
+    public static void changeLocation(Transaction tx2,Node node,Node node2, String location){
+        /**
+         * 修改当前的location关系
+         */
+        tx2.run("MATCH (n1)-[r:NEAR]->(n2) " +
+                "WHERE ID(n1) = $id1 AND ID(n2) = $id2 " +
+                "set r.location = '"+ location +"'", parameters("id1", node.id(), "id2", node2.id()));
+        System.out.println("修改成功");
     }
 
 }

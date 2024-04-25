@@ -104,7 +104,7 @@ public class SearchCaoTuDemo1 {
 
 
 
-                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化  *****好像判断有点问题***** 不能使用简单的bbox进行判断
+                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化   不能使用简单的bbox进行判断 已经更换判断
 
                     //先获取所有道路数据
                     String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
@@ -114,14 +114,14 @@ public class SearchCaoTuDemo1 {
                         List box1 = record3.get("box").asList();
                         roadBox.add(box1);//所有道路坐标的获取
                     }
-                    System.out.println(roadBox.size());
+                   //System.out.println(roadBox.size());
 
                     //循环判断 是否有道路通过 如果有就下一个 如果没有就一直循环
                     for (int i = 0; i < bbox.size(); i++) {
                         Point p1, p2;
                         Line line1;
                         if (i >= bbox.size() - 1) {
-                            roadRelation.add(false);
+                            roadRelation.add(false);//最后一次默认false
                             break;
                         }
 
@@ -149,11 +149,9 @@ public class SearchCaoTuDemo1 {
                             roadRelation.add(false);
                         }
                     }
-
 //                    System.out.println(roadRelation.toString());
                     // 提交事务
                     tx.commit();
-
                 }
                 finally {
                     session.close();

@@ -53,8 +53,7 @@ public class CalculateLocation {
 //        return result;
 //    }
 
-    public static double GetJiaoDu(List<Object> bbox1,List<Object> bbox2 )
-    {
+    public static double getAngle(List<Object> bbox1, List<Object> bbox2) {
         double[] center1 = calculateCenterPoint(bbox1);
         double[] center2 = calculateCenterPoint(bbox2);
         double x1 = center1[0];
@@ -62,54 +61,45 @@ public class CalculateLocation {
         double x2 = center2[0];
         double y2 = center2[1];
 
-        double r1 = Math.atan((y2 - y1) / (x2 - x1));
-        double r2 = 0;
-        double pi = Math.PI;
-        // 再根据条件将象限角θ转换为方位角α：
-        if ((x2 - x1) > 0 && (y2 - y1) > 0) {
-            r2 = 90 - r1 / pi * 180;
-        }
-        if ((x2 - x1) < 0 && (y2 - y1) > 0) {
-            r2 = 360 + r1 / pi * 180;
-        }
-        if ((x2 - x1) < 0 && (y2 - y1) < 0) {
-            r2 = 270 - r1 / pi * 180;
-        }
-        if ((x2 - x1) > 0 && (y2 - y1) < 0) {
-            r2 = 90 - r1 / pi * 180;
+        // 计算两点之间的角度（弧度）
+        double angleInRadians = Math.atan2(y2 - y1, x2 - x1);
+
+        // 将弧度转换为角度（0到360度）
+        double angleInDegrees = Math.toDegrees(angleInRadians);
+
+        // 处理负角度，将其转换为0到360度的范围
+        if (angleInDegrees < 0) {
+            angleInDegrees += 360;
         }
 
-
-        return r2;
+        return angleInDegrees;
     }
 
-    /**
-     * 准确方位
-     * @param bbox1
-     * @param bbox2
-     * @return
-     */
-    public static String GetDirection(List<Object> bbox1,List<Object> bbox2)
-    {
+    public static String GetDirection(List<Object> bbox1, List<Object> bbox2) {
+        double angle = getAngle(bbox1, bbox2);
         String result = "";
-        double jiaodu = GetJiaoDu(bbox1, bbox2);
-        if ((jiaodu <= 10) || (jiaodu > 350)){
-            result += "北";}
-        else if ((jiaodu > 10) && (jiaodu <= 80)){
-            result += "东北";}
-        else if ((jiaodu > 80) && (jiaodu <= 100)){
-            result += "东";}
-        else if ((jiaodu > 100) && (jiaodu <= 170)){
-            result += "东南";}
-        else if ((jiaodu > 170) && (jiaodu <= 190)){
-            result += "南";}
-        else if ((jiaodu > 190) && (jiaodu <= 260)){
-            result += "西南";}
-        else if ((jiaodu > 260) && (jiaodu <= 280)){
-            result +="西";}
-        else if ((jiaodu > 280) && (jiaodu <= 350)){
-            result += "西北";}
-            return result;
+
+        if (angle >= 0 && angle < 22.5) {
+            result = "东";
+        } else if (angle >= 22.5 && angle < 67.5) {
+            result = "东北";
+        } else if (angle >= 67.5 && angle < 112.5) {
+            result = "北";
+        } else if (angle >= 112.5 && angle < 157.5) {
+            result = "西北";
+        } else if (angle >= 157.5 && angle < 202.5) {
+            result = "西";
+        } else if (angle >= 202.5 && angle < 247.5) {
+            result = "西南";
+        } else if (angle >= 247.5 && angle < 292.5) {
+            result = "南";
+        } else if (angle >= 292.5 && angle < 337.5) {
+            result = "东南";
+        } else if (angle >= 337.5 && angle <= 360) {
+            result = "东";
+        }
+
+        return result;
     }
 
     /**
