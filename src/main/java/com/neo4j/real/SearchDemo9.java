@@ -1,9 +1,10 @@
-package com.neo4j;
+package com.neo4j.real;
 
 import com.Common.DriverCommon;
 import com.Common.PathCommon;
 import com.Util.CalculateLocation;
-import com.neo4j.caotu.SearchCaoTuDemo1;
+
+import com.neo4j.sketch.SearchFromSketch;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
@@ -41,7 +42,7 @@ public class SearchDemo9 {
 
     }
     public   ArrayList<String[]> searchDemo(String labelName) {
-        SearchCaoTuDemo1 searchCaoTuDemo1 = new SearchCaoTuDemo1(labelName);
+        SearchFromSketch searchCaoTuDemo1 = new SearchFromSketch(labelName);
         String[] searches = searchCaoTuDemo1.getSearches().toArray(new String[0]);//交替查询可以减少很多输出结果
         String[] positions =searchCaoTuDemo1.getPositions().toArray(new String[0]);
         Boolean[] roadRelation =searchCaoTuDemo1.getRoadRelation().toArray(new Boolean[0]);
@@ -238,9 +239,9 @@ public class SearchDemo9 {
 //                                    break;
 //                                }
                                 if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就 再次添加
-                                    if (Arrays.toString(list.get(i)).contains("265948702")){
-                                        System.out.println(Arrays.toString(list.get(i)));
-                                    }
+//                                    if (Arrays.toString(list.get(i)).contains("265948702")){
+//                                        System.out.println(Arrays.toString(list.get(i)));
+//                                    }
                                     list.add(list.get(i));
                                     break;
                                 }

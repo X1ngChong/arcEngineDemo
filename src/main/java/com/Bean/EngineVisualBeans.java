@@ -3,6 +3,7 @@ package com.Bean;
 import com.Common.PathCommon;
 import com.Service.impl.Neo4jServiceImpl;
 import com.Util.*;
+import com.Util.list.ListUtils2;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
@@ -15,7 +16,8 @@ import com.esri.arcgis.geometry.Envelope;
 import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
 
-import com.neo4j.SearchDemo9;
+import com.neo4j.real.SearchDemo9;
+import com.neo4j.real.SearchFromReal;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -26,8 +28,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author JXS
@@ -38,8 +40,8 @@ public class EngineVisualBeans {
 
     public Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
 
-    //从neo4j获取的数据
-    private  ArrayList<String[]> list = null;
+    //从neo4j获取的数据,主要的数据储存地
+    public  ArrayList<String[]> list = null;
      private JFrame frame;//frame主窗口
 
     private JDialog popupDialog;//剩余列表弹窗
@@ -47,10 +49,9 @@ public class EngineVisualBeans {
     private  static Integer index = 0;//当前数据的下标
 
     private static boolean extentSet = false;
+    private static JDialog caoTuLog = new JDialog();
 
-    private static Set<Object> set = new HashSet<>();
 
-     private static JDialog caoTuLog = new JDialog();
 
     public  void initialVisual(String labelName) throws Exception {
 
@@ -65,15 +66,23 @@ public class EngineVisualBeans {
 
         log.info("初始化中");
 
-        SearchDemo9 searchList = new SearchDemo9();
+        //SearchDemo9 searchList = new SearchDemo9();
+        SearchFromReal searchList = new SearchFromReal();
 
-        //TODO 草图数据
+        /*
+         草图数据
+         */
 
         // list = searchDemo.searchDemo("zhangpengtao");
+
         list = searchList.searchDemo(labelName);
 
-        ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
-        list = sorter.sortAndFilterList(list);
+       // ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
+
+        ListUtils2 sorter = new ListUtils2();
+        HashMap<String, List<String[]>> weights = sorter.sortAndFilterList(list);//权值map集合
+
+        list = sorter.convertMapToList(weights);
 
 
         log.info("初始化完成");
@@ -88,7 +97,7 @@ public class EngineVisualBeans {
         /**
          * 可視化處理
          */
-        //创建一个地图可视化组件并加载一个.mxd地图文档。
+        //创建一张地图可视化组件并加载一个.mxd地图文档。
 
         MapAdd mapTemp = new MapAdd();
         MapBean map = mapTemp.getMap(PathCommon.caoTuName); //地图容器
@@ -316,7 +325,7 @@ public class EngineVisualBeans {
         IQueryFilter queryFilter = new QueryFilter();
 
         //判断不为空并且不包含重复元素
-        if(list.get(number) != null && !hasDuplicates(list)) {
+        if(list.get(number) != null) {
             featureSelection.clear();//清除选中元素 每次执行下一次查询开始
             // 构建 IN 子句的一部分，将数组转换为逗号分隔的字符串
             String osmIdList = String.join(", ", list.get(number));
@@ -385,17 +394,7 @@ public IEnvelope setExtent(IEnvelope extent) throws IOException {
    return expandedExtent;
 }
 
-    // 检查列表是否包含重复值
-    private static boolean hasDuplicates(ArrayList<String[]> list) {
-        for (Object element : list) {
-            if (!set.add(element)) {
-                set.clear();//清除集合
-                return true; // 重复元素
-            }
-        }
-        set.clear();//清除集合
-        return false; // 没有重复元素
-    }
+
 
     private String showNameSelectionDialog()  {
         // Specify the directory path

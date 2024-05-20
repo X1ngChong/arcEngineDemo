@@ -1,4 +1,4 @@
-package com.Util;
+package com.Util.list;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class ListUtils {
         // 第一步：统计每个第一个元素出现的次数
         Map<String, Integer> countMap = countFirstElements(list);
 
-        // 第二步：将Map按value降序排序
+        // 第二步：将Map按value降序排序 sortedEntries存储带权值的map
         List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(countMap.entrySet());
         sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
@@ -32,6 +32,7 @@ public class ListUtils {
             // 检查是否已添加过该第一个元素
             if (addedFirstElements.add(firstElement)) {
                 // 查找原始list中第一个元素匹配的第一个String[]并添加到结果中
+                //TODO 在这进行相同草图间数据的筛选,把最相似的放在最上面
                 for (String[] item : list) {
                     if (item != null && item.length > 0 && item[0].equals(firstElement)) {
                         sortedAndFilteredList.add(item);
@@ -56,25 +57,5 @@ public class ListUtils {
         }
 
         return countMap;
-    }
-
-    public static void main(String[] args) {
-        ListUtils sorter = new ListUtils();
-
-        ArrayList<String[]> dataList = new ArrayList<>();
-        dataList.add(new String[]{"156128805", "265949063", "156126719"});
-        dataList.add(new String[]{"156128805", "265949063", "155915368"});
-        dataList.add(new String[]{"156128805", "265949063", "155915372"});
-        dataList.add(new String[]{"156128805", "265949063", "475183085"});
-        dataList.add(new String[]{"156128805", "265949063", "156134103"});
-        dataList.add(new String[]{"156128806", "265949063", "123456789"}); // 另一个不同的第一个元素
-
-        // 调用方法来获取排序和过滤后的列表
-        ArrayList<String[]> sortedAndFilteredList = sorter.sortAndFilterList(dataList);
-
-        // 打印结果
-        for (String[] item : sortedAndFilteredList) {
-            System.out.println(Arrays.toString(item));
-        }
     }
 }

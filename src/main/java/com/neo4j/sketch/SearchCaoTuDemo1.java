@@ -1,13 +1,11 @@
-package com.neo4j.caotu;
+package com.neo4j.sketch;
 
 import com.Bean.Line;
 import com.Bean.Point;
 import com.Common.DriverCommon;
 import com.Util.CalIntersect;
 import com.Util.CalculateLocation;
-import com.Util.Neo4jCalculatePointUtil;
 import org.neo4j.driver.*;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -17,7 +15,7 @@ import java.util.*;
 
 public class SearchCaoTuDemo1 {
     public static void main(String[] args) {
-        SearchCaoTuDemo1 s = new SearchCaoTuDemo1("chenhui ");
+        SearchFromSketch s = new SearchFromSketch("chenhui ");
     }
     private final Integer number = 3;//设置初始的筛选地物数量
 

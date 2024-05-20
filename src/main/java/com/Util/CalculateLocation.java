@@ -1,12 +1,14 @@
 package com.Util;
 
-import com.Bean.Point;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 /**
  * @author JXS
  */
+@Slf4j
 public class CalculateLocation {
 
     public static double[] calculateCenterPoint(List<Object> bbox) {
@@ -27,31 +29,6 @@ public class CalculateLocation {
         // 返回中心点坐标
         return new double[]{centerX, centerY};
     }
-
-//    public static String calculateLocation(List<Object> bbox1,List<Object> bbox2) {
-//        double[] center1 = calculateCenterPoint(bbox1);
-//        double[] center2 = calculateCenterPoint(bbox2);
-//            String result = "";
-//        if (center1[0] < center2[0]) {
-//           result = result+"西";
-//        } else if (center1[0] > center2[0]) {
-//            result = result+"东";
-//        } else {//如果在同一点
-//            result = result+"";
-//        }
-//
-//        // 比较 y 轴上的相对位置
-//        if (center1[1] < center2[1]) {
-//            result = result+"南";
-//        } else if (center1[1] > center2[1]) {
-//            result = result+"北";
-//        } else {//如果在同一点
-//            result = result+"";
-//        }
-//
-//        // 返回中心点坐标
-//        return result;
-//    }
 
     public static double getAngle(List<Object> bbox1, List<Object> bbox2) {
         double[] center1 = calculateCenterPoint(bbox1);
@@ -74,6 +51,13 @@ public class CalculateLocation {
 
         return angleInDegrees;
     }
+
+    /**
+     * 精确计算方位 用于处理原始地图方位
+     * @param bbox1
+     * @param bbox2
+     * @return
+     */
 
     public static String GetDirection(List<Object> bbox1, List<Object> bbox2) {
         double angle = getAngle(bbox1, bbox2);
@@ -212,6 +196,8 @@ public class CalculateLocation {
         if("".equals(result)){
             result = getDirection(bbox1,bbox2);
         }
+
+        log.info("明显方位:{}",result);
 
         return result;
     }

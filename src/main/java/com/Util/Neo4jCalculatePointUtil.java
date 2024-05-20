@@ -5,6 +5,9 @@ import com.Bean.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author JXS
+ */
 public class Neo4jCalculatePointUtil {
     /**
      * 根据list box算出中心point

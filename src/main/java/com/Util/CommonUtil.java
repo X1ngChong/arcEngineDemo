@@ -7,7 +7,16 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * @author JXS
+ */
 public class CommonUtil {
+    /**
+     * 获取文件名称,用于直接
+     * @param directoryPath
+     * @return
+     * @throws IOException
+     */
     public static String[] getFileNames(String directoryPath) throws IOException {
         List<String> fileNames = new ArrayList<>();
 
