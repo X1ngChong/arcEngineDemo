@@ -79,10 +79,8 @@ public class EngineVisualBeans {
 
        // ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
 
-        ListUtils2 sorter = new ListUtils2();
-        HashMap<String, List<String[]>> weights = sorter.sortAndFilterList(list);//权值map集合
 
-        list = sorter.convertMapToList(weights);
+
 
 
         log.info("初始化完成");

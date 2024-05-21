@@ -207,19 +207,27 @@ public class SearchFromSketch {
      * @return
      */
     public void searchGeometryByLandmarkTypeCount(Transaction tx,Map<String, Integer> landmarkTypeCount , String labelName, ArrayList<String> geometryList){
-        for (Map.Entry<String, Integer> entry : landmarkTypeCount.entrySet()) {
-            String landmarkType = entry.getKey();
-            int count = entry.getValue();
 
-            String cypherQuery = "MATCH (n:" + labelName + ") WHERE n.Type = '" + landmarkType + "' RETURN n.geometry as geometry LIMIT " + count;
-            Result result = tx.run(cypherQuery);
-            while (result.hasNext()) {
-                Record record = result.next();
-                String geometry = record.get("geometry").asString();
-                // 处理返回的几何信息，可以根据需要进行进一步操作
-                geometryList.add(geometry);
-            }
+            for (Map.Entry<String, Integer> entry : landmarkTypeCount.entrySet()) {
+                String landmarkType = entry.getKey();
+                int count = entry.getValue();
+
+                String cypherQuery = "MATCH (n:" + labelName + ") WHERE n.Type = '" + landmarkType + "' RETURN n.geometry as geometry LIMIT " + count;
+                Result result = tx.run(cypherQuery);
+                while (result.hasNext()) {
+                    Record record = result.next();
+                    String geometry = record.get("geometry").asString();
+                    // 处理返回的几何信息，可以根据需要进行进一步操作
+                    if (geometryList.size()<3){
+                        geometryList.add(geometry);
+                    }else {
+                        return;
+                    }
+
+                }
+
         }
+
     }
 
     public ArrayList<String> getSearches() {

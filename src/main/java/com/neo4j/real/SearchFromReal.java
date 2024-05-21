@@ -4,6 +4,7 @@ import com.Common.DriverCommon;
 import com.Common.PathCommon;
 import com.Util.CalculateLocation;
 
+import com.Util.list.ListUtils2;
 import com.neo4j.sketch.SearchFromSketch;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
@@ -32,8 +33,9 @@ public class SearchFromReal {
     public   ArrayList<String[]> searchDemo(String labelName) {
         SearchFromSketch searchResult = new SearchFromSketch(labelName);
         String[] searches = searchResult.getSearches().toArray(new String[0]);//交替查询可以减少很多输出结果
-        String[] positions =searchResult.getPositions().toArray(new String[0]);
-        Boolean[] roadRelation =searchResult.getRoadRelation().toArray(new Boolean[0]);
+        String[] positions = searchResult.getPositions().toArray(new String[0]);
+        Boolean[] roadRelation = searchResult.getRoadRelation().toArray(new Boolean[0]);
+        ArrayList<String> geometryList = searchResult.getGeometryList();
 
         System.out.println(Arrays.toString(searches));
         System.out.println(Arrays.toString(positions));
@@ -54,6 +56,10 @@ public class SearchFromReal {
                 //进行结果集二次筛选
                 secondFilter(driver,roadRelation, list);
                 log.info("筛选后的结果集长度:{}",list.size());
+
+
+                ListUtils2 sorter = new ListUtils2();
+                list = sorter.sortAndFilterList(list,geometryList);//权值map集合
 
                 // 提交事务,这是筛选
                 tx.commit();
