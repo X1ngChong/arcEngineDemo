@@ -141,66 +141,47 @@ public class CalculateLocation {
         // 将第二个边界框的坐标转换为 Double[] 数组
         Double[] bbox2Coords = convertToDoubleArray(bbox2);
 
-        // 检查第二个边界框的所有点是否都在第一个边界框的右侧
-        boolean allPointsOnRight = true;
-        for (int i = 0; i < 2; i++) {
-            if (bbox2Coords[i] < bbox1Coords[i]) {
-                allPointsOnRight = false;
-                break;
-            }
-        }
+        // bbox1 的右边和左边的 x 坐标
+        double bbox1Right = bbox1Coords[2];
+        double bbox1Left = bbox1Coords[0];
+        // bbox1 的顶部和底部的 y 坐标
+        double bbox1Top = bbox1Coords[3];
+        double bbox1Bottom = bbox1Coords[1];
 
-        // 如果第二个边界框的所有点都在第一个边界框的右侧，则认为明显在东方位
-        if (allPointsOnRight) {
+        // bbox2 的右边和左边的 x 坐标
+        double bbox2Right = bbox2Coords[2];
+        double bbox2Left = bbox2Coords[0];
+        // bbox2 的顶部和底部的 y 坐标
+        double bbox2Top = bbox2Coords[3];
+        double bbox2Bottom = bbox2Coords[1];
+
+        // 检查 bbox2 是否在 bbox1 的右侧
+        if (bbox2Left > bbox1Right) {
             result += "东";
-        } else {
-            boolean allPointsOnLeft = true;
-            // 检查第二个边界框的所有点是否都在第一个边界框的左侧
-            for (int i = 2; i < 4; i++) {
-                if (bbox2Coords[i] > bbox1Coords[i]) {
-                    allPointsOnLeft = false;
-                    break;
-                }
-            }
-            // 如果第二个边界框的所有点都在第一个边界框的左侧，则认为明显在西方位
-            if (allPointsOnLeft) {
-                result += "西";
-            }
+        }
+        // 检查 bbox2 是否在 bbox1 的左侧
+        if (bbox2Right < bbox1Left) {
+            result += "西";
+        }
+        // 检查 bbox2 是否在 bbox1 的上方
+        if (bbox2Bottom > bbox1Top) {
+            result += "北";
+        }
+        // 检查 bbox2 是否在 bbox1 的下方
+        if (bbox2Top < bbox1Bottom) {
+            result += "南";
         }
 
-        // 检查第二个边界框的所有点是否都在第一个边界框的上方
-        boolean allPointsAbove = true;
-        for (int i = 2; i < 4; i++) {
-            if (bbox2Coords[i] < bbox1Coords[i]) {
-                allPointsAbove = false;
-                break;
-            }
-        }
-        // 如果第二个边界框的所有点都在第一个边界框的上方，则认为明显在北方位
-        if (allPointsAbove) {
-            result += "北";
-        } else {
-            boolean allPointsBelow = true;
-            // 检查第二个边界框的所有点是否都在第一个边界框的下方
-            for (int i = 0; i < 2; i++) {
-                if (bbox2Coords[i] > bbox1Coords[i]) {
-                    allPointsBelow = false;
-                    break;
-                }
-            }
-            // 如果第二个边界框的所有点都在第一个边界框的下方，则认为明显在南方位
-            if (allPointsBelow) {
-                result += "南";
-            }
-        }
+        // 如果结果为空，使用 GetDirection 方法
         if("".equals(result)){
-            result = getDirection(bbox1,bbox2);
+            result = GetDirection(bbox1,bbox2);
         }
 
         log.info("明显方位:{}",result);
 
         return result;
     }
+
 
     /**
      * 将 Object 类型的坐标列表转换为 Double[] 数组

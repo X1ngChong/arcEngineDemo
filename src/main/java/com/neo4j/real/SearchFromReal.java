@@ -53,6 +53,7 @@ public class SearchFromReal {
                 long endTime = System.currentTimeMillis();
                 log.info("程序运行时间：{} 毫秒", (endTime - startTime));
                 log.info("原始的结果集长度:{}",list.size());
+
                 //进行结果集二次筛选
                 secondFilter(driver,roadRelation, list);
                 log.info("筛选后的结果集长度:{}",list.size());
