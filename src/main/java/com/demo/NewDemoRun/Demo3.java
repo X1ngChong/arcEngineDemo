@@ -2,6 +2,16 @@ package com.demo.NewDemoRun;
 
 import java.util.*;
 
+/**
+ * 匹配: 草图节点 ID = 29, 真实节点 ID = 99, 类型 = school, 草图数量 = 2, 真实数量 = 2
+ * 匹配: 草图节点 ID = 29, 真实节点 ID = 99, 类型 = resident, 草图数量 = 5, 真实数量 = 5
+ * 匹配: 草图节点 ID = 30, 真实节点 ID = 96, 类型 = resident, 草图数量 = 3, 真实数量 = 3
+ * 匹配: 草图节点 ID = 30, 真实节点 ID = 97, 类型 = resident, 草图数量 = 3, 真实数量 = 3
+ * 匹配: 草图节点 ID = 30, 真实节点 ID = 103, 类型 = resident, 草图数量 = 3, 真实数量 = 3
+ * 匹配: 草图节点 ID = 31, 真实节点 ID = 98, 类型 = square, 草图数量 = 1, 真实数量 = 1
+ * 匹配: 草图节点 ID = 31, 真实节点 ID = 98, 类型 = school, 草图数量 = 2, 真实数量 = 2
+ * 匹配: 草图节点 ID = 31, 真实节点 ID = 98, 类型 = resident, 草图数量 = 2, 真实数量 = 2
+ */
 class NodeData2 {
     Map<String, Integer> typesCount = new HashMap<>();
 
@@ -21,30 +31,32 @@ public class Demo3 {
     }
 
     private static void initializeRealData(Map<Integer, NodeData2> realData) {
-        addNodeData(realData, 95, new String[]{"resident", "1", "university", "1", "college", "1"});
-        addNodeData(realData, 96, new String[]{"resident", "3", "mall", "1", "park", "1"});
-        addNodeData(realData, 97, new String[]{"resident", "3", "mall", "1", "park", "1"});
-        addNodeData(realData, 98, new String[]{"square", "1", "school", "2", "resident", "2"});
-        addNodeData(realData, 99, new String[]{"school", "2", "resident", "5"});
-        addNodeData(realData, 100, new String[]{"resident", "4", "school", "2"});
-        addNodeData(realData, 101, new String[]{"resident", "5", "school", "1", "square", "1"});
-        addNodeData(realData, 102, new String[]{"hospital", "1", "school", "1", "park", "1", "resident", "1"});
-        addNodeData(realData, 103, new String[]{"resident", "3"});
-        addNodeData(realData, 104, new String[]{"school", "2", "resident", "4"});
-        addNodeData(realData, 105, new String[]{"resident", "1"});
+        addNodeData(realData, 95, Arrays.asList("resident", 1, "university", 1, "college", 1));
+        addNodeData(realData, 96, Arrays.asList("resident", 3, "mall", 1, "park", 1));
+        addNodeData(realData, 97, Arrays.asList("resident", 3, "mall", 1, "park", 1));
+        addNodeData(realData, 98, Arrays.asList("square", 1, "school", 2, "resident", 2));
+        addNodeData(realData, 99, Arrays.asList("school", 2, "resident", 5));
+        addNodeData(realData, 100, Arrays.asList("resident", 4, "school", 2));
+        addNodeData(realData, 101, Arrays.asList("resident", 5, "school", 1, "square", 1));
+        addNodeData(realData, 102, Arrays.asList("hospital", 1, "school", 1, "park", 1, "resident", 1));
+        addNodeData(realData, 103, Arrays.asList("resident", 3));
+        addNodeData(realData, 104, Arrays.asList("school", 2, "resident", 4));
+        addNodeData(realData, 105, Arrays.asList("resident", 1));
     }
 
     private static void initializeSketchData(Map<Integer, NodeData2> sketchData) {
-        addNodeData(sketchData, 28, new String[]{"resident", "1", "mall", "1", "park", "1"});
-        addNodeData(sketchData, 29, new String[]{"resident", "5", "school", "2"});
-        addNodeData(sketchData, 30, new String[]{"resident", "3"});
-        addNodeData(sketchData, 31, new String[]{"square", "1", "school", "2", "resident", "2"});
+        addNodeData(sketchData, 28, Arrays.asList("resident", 1, "mall", 1, "park", 1));
+        addNodeData(sketchData, 29, Arrays.asList("resident", 5, "school", 2));
+        addNodeData(sketchData, 30, Arrays.asList("resident", 3));
+        addNodeData(sketchData, 31, Arrays.asList("square", 1, "school", 2, "resident", 2));
     }
 
-    private static void addNodeData(Map<Integer, NodeData2> data, int nodeId, String[] typeAndCounts) {
+    private static void addNodeData(Map<Integer, NodeData2> data, int nodeId, List<Object> typeAndCounts) {
         NodeData2 nodeData = new NodeData2();
-        for (int i = 0; i < typeAndCounts.length; i += 2) {
-            nodeData.addType(typeAndCounts[i], Integer.parseInt(typeAndCounts[i + 1]));
+        for (int i = 0; i < typeAndCounts.size(); i += 2) {
+            String type = (String) typeAndCounts.get(i);
+            int count = (int) typeAndCounts.get(i + 1);
+            nodeData.addType(type, count);
         }
         data.put(nodeId, nodeData);
     }
