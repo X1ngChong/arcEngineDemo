@@ -31,6 +31,17 @@ class NodeData {
     void addType(String type, int count) {
         typesCount.put(type, count);
     }
+
+    // 获取所有类型数量的总和
+    int getTotalCount() {
+        return typesCount.values().stream().mapToInt(Integer::intValue).sum();
+    }
+    @Override
+    public String toString() {
+        return "NodeData{" +
+                "typesCount=" + typesCount +
+                '}';
+    }
 }
 
 public class Demo1 {
