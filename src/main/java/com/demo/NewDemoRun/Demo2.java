@@ -4,6 +4,26 @@ import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 
+/**
+ * **有点问题
+ *  *
+ *  * 95: resident (1), university (1), college (1)
+ *  * 96: resident (3), mall (1), park (1)
+ *  * 97: resident (3), mall (1), park (1)
+ *  * 98: square (1), school (2), resident (2)
+ *  * 99: school (2), resident (5)
+ *  * 100: resident (4), school (2)
+ *  * 101: resident (5), school (1), square (1)
+ *  * 102: hospital (1), school (1), park (1), resident (1)
+ *  * 103: resident (3)
+ *  * 104: school (2), resident (4)
+ *  * 105: resident (1)
+ *  *
+ *  * 28: resident (1), mall (1), park (1)
+ *  * 29: resident (5), school (2) ----
+ *  * 30: resident (3)
+ *  * 31: square (1), school (2), resident (2)
+ */
 import java.util.HashMap;
 import java.util.Map;
 
