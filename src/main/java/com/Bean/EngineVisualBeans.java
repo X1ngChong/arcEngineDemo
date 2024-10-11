@@ -3,7 +3,6 @@ package com.Bean;
 import com.Common.PathCommon;
 import com.Service.impl.Neo4jServiceImpl;
 import com.Util.*;
-import com.Util.list.ListUtils2;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
@@ -16,7 +15,6 @@ import com.esri.arcgis.geometry.Envelope;
 import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
 
-import com.neo4j.real.SearchDemo9;
 import com.neo4j.real.SearchFromReal;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,8 +26,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author JXS

@@ -3,9 +3,7 @@ package com.demo.NewDemoRun;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Path;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
