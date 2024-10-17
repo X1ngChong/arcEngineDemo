@@ -38,10 +38,13 @@ public class SearchFromReal {
         ArrayList<String> geometryList = searchResult.getGeometryList();
 
         System.out.println(Arrays.toString(searches));
-        System.out.println(Arrays.toString(positions));
+        System.out.println(Arrays.toString(positions)); //[buliding, pitch, pitch] 这个单词错了！！！！ 找问题
         System.out.println(Arrays.toString(roadRelation));
 
 
+        /**
+         * 开始进行从真实草图查询
+         */
         try (DriverCommon driverCommon = new DriverCommon();
              Driver driver = driverCommon.getGraphDatabase();
              Session session = driver.session();) {
@@ -108,7 +111,7 @@ public class SearchFromReal {
                 CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
                         runRecursiveQuery(tx, searches, positions, endNode, currentIndex+1,newResult)//以第二个节点为头进行下一步查询
                 );
-                future.join();  // Wait for the completion of the asynchronous task
+                future.join();  // 等待
 
             }
         } else if(currentIndex < searches.length - 2 && currentIndex >=1){
@@ -139,12 +142,13 @@ public class SearchFromReal {
                 Record record = result.next();
                 Node endNode = record.get("endNode").asNode();
                 if(!currentResult.toString().contains(endNode.get("osm_id").asString())){
-                    if (CalculateLocation.GetDirection(beginBbox, endNode.get("bbox").asList()).contains(positions[positions.length-1])) {
+                    //把后面的positions中存放的应该变成纯数字
+                    if (CalculateLocation.compareAndCalculate(CalculateLocation.GetDirectionNew(beginBbox, endNode.get("bbox").asList()),positions[positions.length-1])) {
                         int length = currentResult.length();
                         currentResult.append("'").append(endNode.get("osm_id").asString()).append("'");
-                        if(currentResult.toString().contains("265949063")){//看是否可以查到
-                            System.out.println(currentResult.toString());
-                        }
+//                        if(currentResult.toString().contains("265949063")){//看是否可以查到
+//                            System.out.println(currentResult.toString());
+//                        }
                         String[] resultArray = currentResult.toString().split(",");
                         list.add(resultArray);
 //                    System.out.println(list.get(0)[0]);
@@ -175,9 +179,12 @@ public class SearchFromReal {
 
 
         if(beginNode != null){
-            cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND r.location CONTAINS '"+position+"' ");//判断方位
+            //cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND r.location CONTAINS '"+position+"' ");//判断方位
+            cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND ").append(Double.parseDouble(position) - 22.5).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + 22.5).append(" ");//修改后的方位
+            System.out.println(cypherQuery);
         }else{
-            cypherQuery.append(" WHERE  r.location CONTAINS '"+position+"' ");//判断方位
+            cypherQuery.append(" WHERE ").append(Double.parseDouble(position) - 22.5).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + 22.5).append(" ");//判断方位
+            System.out.println(cypherQuery);
         }
 
         cypherQuery.append(" RETURN ");
@@ -224,17 +231,8 @@ public class SearchFromReal {
                         Result result = tx.run(cypherQuery2,parameters);
                         while(result.hasNext()){
                             Boolean boolen = !result.next().get("line").asString().contains("null");//结果集的line不为空 代表为true 否则为false
-//                                if (!boolen.equals(roadRelation[k])){//当俩个有一个不相等的时候就移除
-//                                    if (Arrays.toString(list.get(i)).contains("265948702")){
-//                                        System.out.println(Arrays.toString(list.get(i)));
-//                                    }
-//                                    toRemove.add(i);
-//                                    break;
-//                                }
+
                             if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就 再次添加
-//                                    if (Arrays.toString(list.get(i)).contains("265948702")){
-//                                        System.out.println(Arrays.toString(list.get(i)));
-//                                    }
                                 list.add(list.get(i));
                                 break;
                             }

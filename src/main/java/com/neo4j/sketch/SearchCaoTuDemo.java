@@ -50,7 +50,7 @@ public class SearchCaoTuDemo {
                       }
                   }
 
-                    String location = CalculateLocation.GetDirection(list.get(0).get("n").get("bbox").asList(), list.get(list.size()-1).get("n").get("bbox").asList());
+                    String location = String.valueOf(CalculateLocation.GetDirectionNew(list.get(0).get("n").get("bbox").asList(), list.get(list.size()-1).get("n").get("bbox").asList()));
                     positions.add(location);//第一个和最后一个的方位
 
 //                    System.out.println(list.get(list.size()-1).get("n").get("Type").asString());

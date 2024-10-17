@@ -23,7 +23,7 @@ public class SearchFromSketch {
 
     private  ArrayList<List> bbox = new ArrayList<>();//searches的地物坐标
 
-    private  ArrayList<String> positions = new ArrayList<>();//方位关系
+    private  ArrayList<String> positions = new ArrayList<>();//方位关系 修改为数字关系
 
     private  ArrayList<List> roadBox = new ArrayList<>();//道路坐标
 
@@ -99,13 +99,14 @@ public class SearchFromSketch {
     public void searchThreePoint(Transaction tx,String labelName){
         // 查询三个最常见的标志性地物类型
         String cypherQuery = "MATCH (n:" + labelName + ") WHERE n.Type <> 'road' RETURN n.Type AS type, COUNT(n) AS count ORDER BY count ASC LIMIT 3";
-        Result result = tx.run(cypherQuery);
+        Result result = tx.run(cypherQuery);//building
         List<Record> landmarkRecords = result.list();
 
         // 将标志性地物类型及其数量还有geometry 存储到地物类型关系的Map中
         for (Record record : landmarkRecords) {
             String type = record.get("type").asString();
             int count = record.get("count").asInt();
+          //  System.out.println(type);
             landmarkTypes.add(type);
             landmarkTypeCount.put(type, count);
         }
@@ -150,7 +151,7 @@ public class SearchFromSketch {
     }
 
     /**
-     * 俩地物之间是否有道路
+     * 俩地物之间是否有道路  TODO：是每次都会去计算是否有关 没有缓存！！！*******
      * @param tx
      * @param labelName
      * @param bbox

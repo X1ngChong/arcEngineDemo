@@ -11,6 +11,11 @@ import java.util.List;
 @Slf4j
 public class CalculateLocation {
 
+    /**
+     * 计算中心点
+     * @param bbox
+     * @return
+     */
     public static double[] calculateCenterPoint(List<Object> bbox) {
         if (bbox == null || bbox.size() != 4) {
             throw new IllegalArgumentException("bbox 内容未初始化");
@@ -30,6 +35,12 @@ public class CalculateLocation {
         return new double[]{centerX, centerY};
     }
 
+    /**
+     * 获取角度
+     * @param bbox1
+     * @param bbox2
+     * @return
+     */
     public static double getAngle(List<Object> bbox1, List<Object> bbox2) {
         double[] center1 = calculateCenterPoint(bbox1);
         double[] center2 = calculateCenterPoint(bbox2);
@@ -63,6 +74,10 @@ public class CalculateLocation {
         double angle = getAngle(bbox1, bbox2);
         String result = "";
 
+        /**
+         * 修改下面 用精确的角度去计算模拟
+         */
+
         if (angle >= 0 && angle < 22.5) {
             result = "东";
         } else if (angle >= 22.5 && angle < 67.5) {
@@ -84,6 +99,25 @@ public class CalculateLocation {
         }
 
         return result;
+    }
+
+    public static Double GetDirectionNew(List<Object> bbox1, List<Object> bbox2) {
+        /*
+         * 修改下面 用精确的角度去计算模拟  相较于前面一种返回的是纯数字
+         */
+        return getAngle(bbox1, bbox2);
+    }
+
+    public static boolean compareAndCalculate(Double beginValue, String endNode) {
+        // 将字符串转换为数字
+        double endValue = Double.parseDouble(endNode);
+
+        // 计算边界值
+        double lowerBound = endValue - 22.5;
+        double upperBound = endValue + 22.5;
+
+        // 判断条件
+        return beginValue > lowerBound && beginValue < upperBound;
     }
 
     /**
@@ -155,26 +189,31 @@ public class CalculateLocation {
         double bbox2Top = bbox2Coords[3];
         double bbox2Bottom = bbox2Coords[1];
 
-        // 检查 bbox2 是否在 bbox1 的右侧
-        if (bbox2Left > bbox1Right) {
-            result += "东";
-        }
-        // 检查 bbox2 是否在 bbox1 的左侧
-        if (bbox2Right < bbox1Left) {
-            result += "西";
-        }
-        // 检查 bbox2 是否在 bbox1 的上方
-        if (bbox2Bottom > bbox1Top) {
-            result += "北";
-        }
-        // 检查 bbox2 是否在 bbox1 的下方
-        if (bbox2Top < bbox1Bottom) {
-            result += "南";
-        }
+        /**
+         * 如何使用数字去判断明显方位？？？？  明显方位暂时不去考虑
+         */
+
+//        // 检查 bbox2 是否在 bbox1 的右侧
+//        if (bbox2Left > bbox1Right) {
+//            result += "东";
+//        }
+//        // 检查 bbox2 是否在 bbox1 的左侧
+//        if (bbox2Right < bbox1Left) {
+//            result += "西";
+//        }
+//        // 检查 bbox2 是否在 bbox1 的上方
+//        if (bbox2Bottom > bbox1Top) {
+//            result += "北";
+//        }
+//        // 检查 bbox2 是否在 bbox1 的下方
+//        if (bbox2Top < bbox1Bottom) {
+//            result += "南";
+//        }
 
         // 如果结果为空，使用 GetDirection 方法
         if("".equals(result)){
-            result = GetDirection(bbox1,bbox2);
+          //  result = GetDirection(bbox1,bbox2);
+              result = String.valueOf(GetDirectionNew(bbox1,bbox2));
         }
 
         log.info("明显方位:{}",result);

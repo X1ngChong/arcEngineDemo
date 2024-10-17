@@ -17,6 +17,13 @@ public class CalculateDistanceByBboxUtil {
         return CalculateDistanceByBboxUtil.calculateDis(o1,o2);
     }
 
+    public static double calculateWG84(List<Object>  c1, List<Object>  c2){
+        List<Object> o1 = Neo4jCalculatePointUtil.calculateCenter(c1);
+        List<Object> o2 = Neo4jCalculatePointUtil.calculateCenter(c2);
+
+        return Math.sqrt(Math.pow((Double)o2.get(0) -(Double) o1.get(0), 2) + Math.pow((Double)o2.get(1) - (Double)o1.get(1), 2));
+    }
+
 
 
     /**
