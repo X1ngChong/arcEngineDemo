@@ -19,8 +19,6 @@ public class FilterByHausdorff {
     public static String[] doFilter(ArrayList<String> geometryList, List<String[]> realOsmIdList) {
         ArrayList<String> converterGeometryList = ProjectionConverter.converter(geometryList);
 
-      //  System.out.println(converterGeometryList.size());
-
         ArrayList<String> realGeometryList = new ArrayList<>();
 
         ArrayList<Double> avgList = new ArrayList<>();
@@ -58,6 +56,7 @@ public class FilterByHausdorff {
                 }
             }
         }
+        System.out.println("最相似的组:"+ Arrays.toString(correspondingValue));
         return correspondingValue;
     }
 

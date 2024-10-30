@@ -1,6 +1,7 @@
 package com.Util.list.LineUtils;
 
 import com.Bean.Point;
+import com.Common.PathCommon;
 import com.Util.Neo4jCalculatePointUtil;
 import org.neo4j.driver.*;
 import java.util.HashMap;
@@ -11,7 +12,9 @@ import java.util.Map;
  * @author JXS
  */
 public class AddNearLineRelationTest1 {
-    public final static String  LAYER_NAME = "xianlinRoads";
+//    public final static String  LAYER_NAME = "xianlinRoads";
+public final static String  LAYER_NAME = "xianLinRoad";
+
     public static void main(String[] args) {
 
         int i = 0;
@@ -22,7 +25,9 @@ public class AddNearLineRelationTest1 {
 
                 // 执行 Cypher 查询    分批次执行
                 //String cypherQuery = "MATCH p=(n:xianlin)-[r:NEAR]->(m:xianlin) RETURN p, id(r) as id skip 0 limit 500 ";
-                String cypherQuery = "MATCH p=(n:xianlin)-[r:NEAR]->(m:xianlin) RETURN p, id(r) as id ";//将所有的xianlin数据去匹配是否有道路经过
+                //String cypherQuery = "MATCH p=(n:xianlin)-[r:NEAR]->(m:xianlin) RETURN p, id(r) as id ";//将所有的xianlin数据去匹配是否有道路经过
+                String cypherQuery = "MATCH p=(n:xianLinBuidling)-[r:NEAR]->(m:xianLinBuidling) RETURN p, id(r) as id ";//将所有的xianlin数据去匹配是否有道路经过
+
 
                 Result result = tx.run(cypherQuery);
                 // 处理查询结果
@@ -53,13 +58,15 @@ public class AddNearLineRelationTest1 {
 
                     //如果有道路经过
                     if (result2.hasNext()) {
-                        String cypherQuery3 = "MATCH (a {osm_id: $ad})-[r:NEAR]->(b {osm_id: $bd}) WHERE  id(r) = $relationshipId and r.line is null  SET r.line = $line return a,b ";
+                        String cypherQuery3 = "MATCH (a {"+ PathCommon.OSMID+": $ad})-[r:NEAR]->(b {"+PathCommon.OSMID+": $bd}) WHERE  id(r) = $relationshipId and r.line is null  SET r.line = $line return a,b ";
 
                         Map<String, Object> parameters = new HashMap<>();
 
                         // 获取节点数据osm的id
-                        String aosmId = record.get("p").asPath().start().get("osm_id").asString();
-                        String bosmId = record.get("p").asPath().end().get("osm_id").asString();
+//                        String aosmId = record.get("p").asPath().start().get("osm_id").asString();
+//                        String bosmId = record.get("p").asPath().end().get("osm_id").asString();
+                        String aosmId = record.get("p").asPath().start().get(PathCommon.OSMID).asString();
+                       String bosmId = record.get("p").asPath().end().get(PathCommon.OSMID).asString();
 
                         parameters.put("ad", aosmId);
                         parameters.put("bd", bosmId);

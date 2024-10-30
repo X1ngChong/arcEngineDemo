@@ -3,6 +3,7 @@ package com.neo4j.sketch;
 import com.Bean.Line;
 import com.Bean.Point;
 import com.Common.DriverCommon;
+import com.Common.PathCommon;
 import com.Util.CalIntersect;
 import com.Util.CalculateLocation;
 import org.neo4j.driver.*;
@@ -47,10 +48,10 @@ public class SearchFromSketch {
                     // 查询三个最常见的标志性地物类型
                     searchThreePoint(tx,labelName);
 
-                    //TODO: 完成方位关系的查找   会重复查找后续优化可以修改
+                    // 完成方位关系的查找   会重复查找后续优化可以修改
                     findDirectionRelationships(tx,labelName,bbox,searches,number);
 
-                    //TODO: 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化   不能使用简单的bbox进行判断 已经更换判断
+                    // 完成草图 俩地物之间是否有道路  未做缓存 后续可以优化   不能使用简单的bbox进行判断 已经更换判断   问题不处在这 应该在实际图谱中查询的时候那俩个地物直接有道路的
                     processRoads(tx, labelName, bbox,roadBox,roadRelation);
 
                     //查询草图的geometry数组
@@ -80,12 +81,16 @@ public class SearchFromSketch {
         int temp = number;
         for (Map.Entry<String, Integer> entry : landmarkTypeCount.entrySet()) {
             String landmark = entry.getKey();
-            int count = entry.getValue();
-            for (int i = 0; i < count; i++) {
+//             int count = entry.getValue();
+//            for (int i = 0; i < count; i++) {
+//                if(temp > 0){
+//                    repeatedLandmarks.add(landmark);
+//                    temp--;
+//                }
+//            }
                 if(temp > 0){
-                    repeatedLandmarks.add(landmark);
+                    repeatedLandmarks.add(landmark);//每个类型选取一个
                     temp--;
-                }
             }
         }
         return repeatedLandmarks;
@@ -98,27 +103,33 @@ public class SearchFromSketch {
      */
     public void searchThreePoint(Transaction tx,String labelName){
         // 查询三个最常见的标志性地物类型
-        String cypherQuery = "MATCH (n:" + labelName + ") WHERE n.Type <> 'road' RETURN n.Type AS type, COUNT(n) AS count ORDER BY count ASC LIMIT 3";
+        String cypherQuery = "MATCH (n:" + labelName + ") WHERE n."+ PathCommon.TypeName +" <> 'null' RETURN n."+ PathCommon.TypeName +" AS type, COUNT(n) AS count ORDER BY count desc ";
         Result result = tx.run(cypherQuery);//building
         List<Record> landmarkRecords = result.list();
-
+        int temp = number;
         // 将标志性地物类型及其数量还有geometry 存储到地物类型关系的Map中
         for (Record record : landmarkRecords) {
             String type = record.get("type").asString();
-            int count = record.get("count").asInt();
+//            int count = record.get("count").asInt();
+
+            if(temp > 0){
+                searches.add(type);//每个类型选取一个
+                temp--;
+            }
+
           //  System.out.println(type);
-            landmarkTypes.add(type);
-            landmarkTypeCount.put(type, count);
+//            landmarkTypes.add(type);
+//            landmarkTypeCount.put(type, count);
         }
 
-        //不为空代表里面有数据
-        if(landmarkTypeCount != null) {
-            searches = convertMapToList(landmarkTypeCount);
-        }  //完成searches数组的查找[pitch, pitch, building]
+//        //不为空代表里面有数据
+//        if(landmarkTypeCount != null) {
+//            searches = convertMapToList(landmarkTypeCount);
+//        }  //完成searches数组的查找[pitch, pitch, building]
 
     }
     /**
-     * 完成方位关系的查找
+     * 完成方位关系的查找 限制只选择三个标志性地物
      * @param tx
      * @param labelName
      * @param searches
@@ -126,23 +137,26 @@ public class SearchFromSketch {
      * @return
      */
     public void findDirectionRelationships(Transaction tx, String labelName, ArrayList<List> bbox ,List<String> searches, int number) {
-        Set<List<Object>> uniqueBbox = new HashSet<>();//判断是否有相同的数据
-        for (String search : searches) {
-            String cypherQuery2 = "MATCH (n:" + labelName + ") WHERE n.Type = '" + search + "' RETURN n.bbox as box ";
+       // System.out.println(searches.toString());
+                int size = searches.size();
+            String cypherQuery2 = "MATCH p=(m:"+labelName+"{"+PathCommon.TypeName+":\""+searches.get(size-3)+"\"})-[r:NEAR]->(n:"+labelName+"{"+PathCommon.TypeName+":\""+searches.get(size-2)+"\"})-[z:NEAR]->(k:"+labelName+"{"+PathCommon.TypeName+":\""+searches.get(size-1)+"\"}) RETURN m.bbox as fbbox,n.bbox as sbbox,k.bbox as lbbox LIMIT 25";//换成具有near关系的节点的
             Result result2 = tx.run(cypherQuery2);
             while (result2.hasNext()  && bbox.size() <number) {
                 Record record = result2.next();
-                List<Object> box1 = record.get("box").asList();
-                if (!uniqueBbox.contains(box1)) { // 检查是否已经存在相同的 bbox
-                    uniqueBbox.add(box1); // 将 bbox 添加到 Set 中
-                    bbox.add(box1);
-                }
+                List<Object> box1 = record.get("fbbox").asList();
+                List<Object> box2 = record.get("sbbox").asList();
+                List<Object> box3 = record.get("lbbox").asList();
+                bbox.add(box1);
+                bbox.add(box2);
+                bbox.add(box3);
             }
-        }
 
 
         for(int i = 0 ; i< searches.size() ; i++){
             if (i+1 < searches.size() ){
+                /**
+                 * 这里可以优化 TODO:就是直接从关系中获取 r.location 然后直接添加
+                 */
                 positions.add(CalculateLocation.getDirection2(bbox.get(i),bbox.get(i+1)));//正常比较
             }else{
                 positions.add(CalculateLocation.getDirection2(bbox.get(0),bbox.get(searches.size()-1)));//第一个和最后一个比较
@@ -151,7 +165,7 @@ public class SearchFromSketch {
     }
 
     /**
-     * 俩地物之间是否有道路  TODO：是每次都会去计算是否有关 没有缓存！！！*******
+     * 俩地物之间是否有道路
      * @param tx
      * @param labelName
      * @param bbox
@@ -159,7 +173,10 @@ public class SearchFromSketch {
      */
     public void processRoads(Transaction tx, String labelName, ArrayList<List> bbox, ArrayList<List> roadBox , ArrayList<Boolean> roadRelation) {
         //先获取所有道路数据
-        String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
+        String roadLabel = "road";
+        //String cypherQuery3 = "MATCH (n:" + labelName + ") WHERE n.Type = 'road' RETURN n.bbox as box ";
+        String cypherQuery3 = "MATCH (n:" + roadLabel + ") WHERE n.type is not null RETURN n.bbox as box ";//测试wandamao的道路
+
         Result result3 = tx.run(cypherQuery3);
         while (result3.hasNext()) {
             Record record3 = result3.next();

@@ -15,7 +15,8 @@ public class AddNearRelation {
     public static void main(String[] args) {
 
 //        String [] textNames = {"caixiangyu","chenhui","huangyi","wangmengyi","zhangpengtao"};
-       String [] textNames = {"xianlin"};
+//       String [] textNames = {"xianlin"};
+        String [] textNames = {"xianLinBuidling"};
        // String [] textNames = {"chenhui"};
         for(int i = 0;i<textNames.length;i++){
             String textName= textNames[i];
@@ -46,12 +47,12 @@ public class AddNearRelation {
                                 String location = String.valueOf(CalculateLocation.GetDirectionNew(box, box2)); //以 数字的形式去存储方位
 
                                 // 计算节点之间的距离
-                           // double distance = CalculateDistanceByBboxUtil.calculateWG84(box, box2); //草图中的坐标系不同所以不能用经纬度去计算坐标 换成新的计算WG84坐标的方法
-                                double distance = CalculateDistanceByBboxUtil.calculate(box, box2);
+                            //double distance = CalculateDistanceByBboxUtil.calculateWG84(box, box2); //草图中的坐标系不同所以不能用经纬度去计算坐标 换成新的计算WG84坐标的方法
+                                double distance = CalculateDistanceByBboxUtil.calculate(box, box2);//计算经纬度
                             System.out.println("距离:  "+distance);
 
-                             // 如果距离小于200，添加或删除 "NEAR" 关系
-                            if (distance < 200) {
+                             // 如果距离小于200，添加或删除 "NEAR" 关系1926/6101 790/2500
+                            if (distance < 790) {
 
                                 /*
                                   删除当前添加的关系

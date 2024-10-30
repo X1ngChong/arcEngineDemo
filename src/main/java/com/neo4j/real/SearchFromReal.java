@@ -4,12 +4,13 @@ import com.Common.DriverCommon;
 import com.Common.PathCommon;
 import com.Util.CalculateLocation;
 
+import com.Util.list.ListToMap;
 import com.Util.list.ListUtils2;
+import com.Util.road.RoadFilter;
 import com.neo4j.sketch.SearchFromSketch;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -26,9 +27,11 @@ public class SearchFromReal {
 
     private    Node firstNode;
     private  int all = 0;
-    private  int place = 0;
 
+    private int place = 0;
     private  ArrayList<String[]> list = new ArrayList<>();//把StringBuilder变成String[]
+
+    private  Map<String[], Double> map = new HashMap<>();//使用这个去计算权值 前面是区域的osm_id集合,后面是权值
 
     public   ArrayList<String[]> searchDemo(String labelName) {
         SearchFromSketch searchResult = new SearchFromSketch(labelName);
@@ -37,10 +40,9 @@ public class SearchFromReal {
         Boolean[] roadRelation = searchResult.getRoadRelation().toArray(new Boolean[0]);
         ArrayList<String> geometryList = searchResult.getGeometryList();
 
-        System.out.println(Arrays.toString(searches));
-        System.out.println(Arrays.toString(positions)); //[buliding, pitch, pitch] 这个单词错了！！！！ 找问题
-        System.out.println(Arrays.toString(roadRelation));
-
+         log.info("查询的地物:{}",Arrays.toString(searches));   //[ pitch, pitch,building]
+         log.info("查询的方位:{}",Arrays.toString(positions)); //[159.32594448949595, 210.3595750793219, 186.86210905224578]
+        log.info("查询的道路关系:{}",Arrays.toString(roadRelation)); //[false, true, false]
 
         /**
          * 开始进行从真实草图查询
@@ -51,19 +53,34 @@ public class SearchFromReal {
             try (Transaction tx = session.beginTransaction()) {
                 long startTime = System.currentTimeMillis();
                 StringBuilder initialResult = new StringBuilder();
+
                 runRecursiveQuery(tx, searches, positions, null, 0,initialResult);
-                System.out.println(all);
+
                 long endTime = System.currentTimeMillis();
                 log.info("程序运行时间：{} 毫秒", (endTime - startTime));
                 log.info("原始的结果集长度:{}",list.size());
 
-                //进行结果集二次筛选
-                secondFilter(driver,roadRelation, list);
+                /**
+                 * 填充权值集合
+                 */
+                ListToMap.populateMap(list, map);
+
+              //  ListToMap.printMap(map);//Key: ['265948702', '156128805', '155915364'], Value: 1.0
+
+
+                /**
+                 * 如果不进行道路二次查询的话 那么结果集排行第二  如果进行道路二次查询的话就排行第三  原因就是这边的权值变化
+                 */
+                RoadFilter.roadFilter(driver, roadRelation, list,map);
+               // ListToMap.printMap(map);//Key: ['156128802', '475184565', '156127005'], Value: 2.0
                 log.info("筛选后的结果集长度:{}",list.size());
 
 
+                /**
+                 * 根据权值去排序然后输出
+                 */
                 ListUtils2 sorter = new ListUtils2();
-                list = sorter.sortAndFilterList(list,geometryList);//权值map集合
+                list = sorter.sortAndFilterList(list,map,geometryList);//权值map集合
 
                 // 提交事务,这是筛选
                 tx.commit();
@@ -103,10 +120,10 @@ public class SearchFromReal {
                 // 递归调用下一次查询
                 Record record = result.next();
                 firstNode = record.get("beginNode").asNode();//获取第一次查询结果的beginNode
-                newResult.append("'").append(firstNode.get("osm_id").asString()).append("',");//储存第一个节点
+                newResult.append("'").append(firstNode.get(PathCommon.OSMID).asString()).append("',");//储存第一个节点
 
                 Node endNode = record.get("endNode").asNode();
-                newResult.append("'").append(endNode.get("osm_id").asString()).append("',");//储存第二个节点
+                newResult.append("'").append(endNode.get(PathCommon.OSMID).asString()).append("',");//储存第二个节点
 
                 CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
                         runRecursiveQuery(tx, searches, positions, endNode, currentIndex+1,newResult)//以第二个节点为头进行下一步查询
@@ -121,13 +138,13 @@ public class SearchFromReal {
                 // 递归调用下一次查询
                 Record record = result.next();
                 Node endNode = record.get("endNode").asNode();
-                if(!currentResult.toString().contains(endNode.get("osm_id").asString())){//如果当前的结果集中没有这个数据才执行第二次查询,如果有就跳到下一个节点
+                if(!currentResult.toString().contains(endNode.get(PathCommon.OSMID).asString())){//如果当前的结果集中没有这个数据才执行第二次查询,如果有就跳到下一个节点
                     /**
                      * 将newResult加入异步,避免newResult的竞争态!!!!
                      */
                     CompletableFuture<Void> future = CompletableFuture.runAsync(() ->{
                                 StringBuilder newResult = new StringBuilder(currentResult);
-                                newResult.append("'").append(endNode.get("osm_id").asString()).append("',");
+                                newResult.append("'").append(endNode.get(PathCommon.OSMID).asString()).append("',");
                                 runRecursiveQuery(tx, searches, positions, endNode, currentIndex + 1, newResult);
                             }
                     );
@@ -141,11 +158,11 @@ public class SearchFromReal {
                 List<Object> beginBbox = firstNode.get("bbox").asList();
                 Record record = result.next();
                 Node endNode = record.get("endNode").asNode();
-                if(!currentResult.toString().contains(endNode.get("osm_id").asString())){
+                if(!currentResult.toString().contains(endNode.get(PathCommon.OSMID).asString())){ //排除为空和重复的ID
                     //把后面的positions中存放的应该变成纯数字
                     if (CalculateLocation.compareAndCalculate(CalculateLocation.GetDirectionNew(beginBbox, endNode.get("bbox").asList()),positions[positions.length-1])) {
                         int length = currentResult.length();
-                        currentResult.append("'").append(endNode.get("osm_id").asString()).append("'");
+                        currentResult.append("'").append(endNode.get(PathCommon.OSMID).asString()).append("'");
 //                        if(currentResult.toString().contains("265949063")){//看是否可以查到
 //                            System.out.println(currentResult.toString());
 //                        }
@@ -153,7 +170,7 @@ public class SearchFromReal {
                         list.add(resultArray);
 //                    System.out.println(list.get(0)[0]);
                         all++;
-                        currentResult.delete(length,currentResult.length());  // Remove the last added node
+                        currentResult.delete(length,currentResult.length());  // 移除最后一个节点
                     }
                 }
 
@@ -167,31 +184,37 @@ public class SearchFromReal {
     private  Result runQuery(Transaction tx, String search, String search2, String position, Node beginNode) {
         StringBuilder cypherQuery = new StringBuilder();
         if(search == null){
-            cypherQuery.append("MATCH (beginNode)");
+            cypherQuery.append("MATCH (beginNode :"+PathCommon.caoTuLabel+")");
         }else{
-            cypherQuery.append("MATCH (beginNode {fclass: '" + search + "'})");
+            cypherQuery.append("MATCH (beginNode :"+PathCommon.caoTuLabel+" {"+PathCommon.TypeName+": '" + search + "'})");
         }
 
 
         if (search2 != null) {
-            cypherQuery.append("-[r:NEAR]->(endNode {fclass: '" + search2 + "'})");
+            cypherQuery.append("-[r:NEAR]->(endNode {"+PathCommon.TypeName+": '" + search2 + "'})");
         }
 
 
-        if(beginNode != null){
-            //cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND r.location CONTAINS '"+position+"' ");//判断方位
-            cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND ").append(Double.parseDouble(position) - 22.5).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + 22.5).append(" ");//修改后的方位
-            System.out.println(cypherQuery);
-        }else{
-            cypherQuery.append(" WHERE ").append(Double.parseDouble(position) - 22.5).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + 22.5).append(" ");//判断方位
-            System.out.println(cypherQuery);
-        }
+//        if(beginNode != null){
+//            //cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND r.location CONTAINS '"+position+"' ");//判断方位
+//            cypherQuery.append(" WHERE ID(beginNode) = $beginNodeId AND ").append(Double.parseDouble(position) - PathCommon.ANGLE_RANGE).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + PathCommon.ANGLE_RANGE).append(" ");//修改后的方位
+//           // System.out.println(cypherQuery);
+//        }else{
+//            cypherQuery.append(" WHERE ").append(Double.parseDouble(position) - PathCommon.ANGLE_RANGE).append(" < toFloat(r.location) < ").append(Double.parseDouble(position) + PathCommon.ANGLE_RANGE).append(" ");//判断方位
+//           // System.out.println(cypherQuery);
+//        }
 
         cypherQuery.append(" RETURN ");
 
         cypherQuery.append(search != null ? "beginNode,endNode" : "endNode");
 
         Result result;
+
+       // System.out.println(cypherQuery);
+
+//        if (beginNode != null) {
+//            System.out.println(beginNode.id());
+//        }
 
         if(beginNode != null){
             result = tx.run(cypherQuery.toString(), parameters("beginNodeId",beginNode.id()));
@@ -202,58 +225,5 @@ public class SearchFromReal {
         return result;
     }
 
-    private  ArrayList<String[]> secondFilter(Driver driver,Boolean[] roadRelation, ArrayList<String[]> list){
-        String labelName = PathCommon.caoTuLabel;//  需要去查询的图层
 
-        try (Session session = driver.session()) {
-            try (Transaction tx = session.beginTransaction()) {
-                List<Integer> toRemove = new ArrayList<>(); // 创建一个列表来存储需要移除的元素的索引
-                int listSize = list.size();
-                for (int i = 0 ;i<listSize;i++){
-                    String[] strings = list.get(i);
-                    for(int k = 0;k<strings.length;k++) {
-                        String cypherQuery2 = "MATCH " +
-                                "(n1:"+labelName+"{osm_id: $osmid1 })-[r:NEAR]->(n2:"+labelName+" {osm_id: $osmid2 }) " +
-                                " RETURN r,r.line AS line limit 1";
-
-                        //语句有错误修改完成 使用parameters传入的参数是 "'123321'" 带俩个双引号的数据
-                        Map<String, Object> parameters = new HashMap<>();
-                        // 创建一个参数映射
-
-                        if (k >= strings.length - 1) {
-                            break;
-                        }
-                        parameters.put("osmid1", strings[k].split("'")[1]);// '99661839'
-                        parameters.put("osmid2", strings[k + 1].split("'")[1]); //'118862383'
-
-
-                        //加入roadRelation
-                        Result result = tx.run(cypherQuery2,parameters);
-                        while(result.hasNext()){
-                            Boolean boolen = !result.next().get("line").asString().contains("null");//结果集的line不为空 代表为true 否则为false
-
-                            if (boolen.equals(roadRelation[k])){//当俩个有一个相等的时候就 再次添加
-                                list.add(list.get(i));
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                for (int i = toRemove.size() - 1; i >= 0; i--) { // 注意这里是 i >= 0
-                    int indexToRemove = toRemove.get(i);
-                    if (indexToRemove < list.size()) {// 确保索引在列表范围内
-                        list.remove(indexToRemove); // 进行移除
-                    }
-                }
-
-                // 提交事务
-                tx.commit();
-
-            }
-        }
-
-
-        return  list;
-    }
 }

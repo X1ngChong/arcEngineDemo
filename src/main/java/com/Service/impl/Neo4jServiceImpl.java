@@ -1,6 +1,7 @@
 package com.Service.impl;
 
 import com.Common.DriverCommon;
+import com.Common.PathCommon;
 import com.Service.Neo4jService;
 import org.neo4j.driver.*;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class Neo4jServiceImpl implements Neo4jService {
             Driver driver = driverCommon.getGraphDatabase();
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {
-                    String cypherQuery = "MATCH (n) where n.osm_id ="+osmId +" RETURN n.name as name";
+                    String cypherQuery = "MATCH (n) where n."+ PathCommon.OSMID +" ="+osmId +" RETURN n."+PathCommon.osmName+" as name";
                     Result result = tx.run(cypherQuery);
                     while (result.hasNext()) {
                         Record record = result.next();

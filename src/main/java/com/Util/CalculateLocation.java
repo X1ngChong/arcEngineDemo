@@ -1,6 +1,7 @@
 package com.Util;
 
 
+import com.Common.PathCommon;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -113,8 +114,8 @@ public class CalculateLocation {
         double endValue = Double.parseDouble(endNode);
 
         // 计算边界值
-        double lowerBound = endValue - 22.5;
-        double upperBound = endValue + 22.5;
+        double lowerBound = endValue - PathCommon.ANGLE_RANGE;
+        double upperBound = endValue + PathCommon.ANGLE_RANGE;
 
         // 判断条件
         return beginValue > lowerBound && beginValue < upperBound;

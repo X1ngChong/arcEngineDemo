@@ -49,7 +49,7 @@ public class EngineVisualBeans {
 
 
 
-    public  void initialVisual(String labelName) throws Exception {
+    public  void initialVisual(String labelName,Integer methodID) throws Exception {
 
         //ae许可初始化
         AoInitialize aoInit = null;
@@ -71,7 +71,15 @@ public class EngineVisualBeans {
 
         // list = searchDemo.searchDemo("zhangpengtao");
 
-        list = searchList.searchDemo(labelName);
+//        list = searchList.searchDemo(labelName);
+
+        if(methodID == null){
+            list = searchList.searchDemo("building");
+        }else if (methodID == 1){
+            list = searchList.searchDemo("building");
+        }
+
+
 
        // ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
 
@@ -241,7 +249,7 @@ public class EngineVisualBeans {
                     frame.dispose();
                     popupDialog.dispose();
                     index = 0; //初始化下标
-                    initialVisual(name);
+                    initialVisual(name,null);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -249,6 +257,48 @@ public class EngineVisualBeans {
             }
         });
         selectNameButton.setBounds(150, 300, 120, 30);
+
+        //创建选择不同方法的按钮
+        JButton showMethodButton1 = new JButton("方法一");
+        JButton showMethodButton2 = new JButton("方法二");
+
+        showMethodButton1.addActionListener(e -> {
+            // 在按钮点击时执行的方法
+            try {
+                index = 0;
+                frame.dispose();
+                popupDialog.dispose();
+                caoTuLog.dispose();
+
+                initialVisual(PathCommon.initMXD,null);//执行不同的方法
+
+                log.info("关闭成功");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+              log.info("失败");
+            }
+
+        });
+        showMethodButton1.setBounds(150, 400, 120, 30);
+
+        showMethodButton2.addActionListener(e -> {
+            // 在按钮点击时执行的方法
+            try {
+                index = 0;
+                frame.dispose();
+                popupDialog.dispose();
+                caoTuLog.dispose();
+
+                initialVisual(PathCommon.initMXD,null);//执行不同的方法
+
+                log.info("关闭成功");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                log.info("失败");
+            }
+
+        });
+        showMethodButton2.setBounds(150, 450, 120, 30);
 
         //构建 frame.
         frame = new JFrame("Arcgis Engine");
@@ -261,7 +311,13 @@ public class EngineVisualBeans {
         frame.add(showDataButton3);
         showDataButton4.setBounds(150, 200, 120, 30);
         frame.add(showDataButton4);
+
         frame.add(selectNameButton);
+
+        frame.add(showMethodButton1);
+        frame.add(showMethodButton2);
+
+
 
         panel.setBounds(150, 300, 300, 250);
         frame.add(panel);
@@ -296,7 +352,7 @@ public class EngineVisualBeans {
     }
 
     /**
-     * TODO 更改地图后查询不到匹配的数据
+     *
      * @param number
      * @throws IOException
      */
@@ -305,7 +361,7 @@ public class EngineVisualBeans {
         /**
         * 遍历所有图层查询数据
         */
-    for (int i = 0; i < map.getLayerCount(); i++) {
+    for (int i = 1; i < map.getLayerCount(); i++) {//这边的图层是building的图层 要自己设置 这里改成了1就是wandamao图层
         // 获取目标图层
         IFeatureLayer targetLayer = (IFeatureLayer)map.getLayer(i); // 这里假设你的目标图层是地图的第一个图层
         IFeatureSelection featureSelection = (IFeatureSelection) targetLayer;//获取选中合集
@@ -324,7 +380,9 @@ public class EngineVisualBeans {
             // 构建 IN 子句的一部分，将数组转换为逗号分隔的字符串
             String osmIdList = String.join(", ", list.get(number));
             // 构建完整的 WHERE 子句
-            queryFilter.setWhereClause("osm_id IN (" + osmIdList + ")");
+          //  queryFilter.setWhereClause(PathCommon.OSMID+" IN (" + osmIdList + ")");
+            queryFilter.setWhereClause("OSMID IN (" + osmIdList + ")");
+
             // 执行查询
             IFeatureCursor featureCursor = featureClass.search(queryFilter, true);
 
@@ -341,7 +399,7 @@ public class EngineVisualBeans {
                 }
 
                 // 获取 "name" 属性的值
-                Object nameValue = feature.getValue(featureClass.findField("name"));
+                //Object nameValue = feature.getValue(featureClass.findField(PathCommon.osmName));
 
                 // 处理查找结果
 //                if (nameValue != null) {
