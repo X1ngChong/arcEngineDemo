@@ -1,4 +1,4 @@
-package com.demo;
+package com.demo.before;
 
 import org.neo4j.driver.*;
 

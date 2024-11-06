@@ -170,54 +170,10 @@ public class CalculateLocation {
      */
     public static String getDirection2(List<Object> bbox1, List<Object> bbox2) {
         String result = "";
+        // 使用 GetDirection 方法
+        result = String.valueOf(GetDirectionNew(bbox1,bbox2));
 
-        // 将第一个边界框的坐标转换为 Double[] 数组
-        Double[] bbox1Coords = convertToDoubleArray(bbox1);
-        // 将第二个边界框的坐标转换为 Double[] 数组
-        Double[] bbox2Coords = convertToDoubleArray(bbox2);
-
-        // bbox1 的右边和左边的 x 坐标
-        double bbox1Right = bbox1Coords[2];
-        double bbox1Left = bbox1Coords[0];
-        // bbox1 的顶部和底部的 y 坐标
-        double bbox1Top = bbox1Coords[3];
-        double bbox1Bottom = bbox1Coords[1];
-
-        // bbox2 的右边和左边的 x 坐标
-        double bbox2Right = bbox2Coords[2];
-        double bbox2Left = bbox2Coords[0];
-        // bbox2 的顶部和底部的 y 坐标
-        double bbox2Top = bbox2Coords[3];
-        double bbox2Bottom = bbox2Coords[1];
-
-        /**
-         * 如何使用数字去判断明显方位？？？？  明显方位暂时不去考虑
-         */
-
-//        // 检查 bbox2 是否在 bbox1 的右侧
-//        if (bbox2Left > bbox1Right) {
-//            result += "东";
-//        }
-//        // 检查 bbox2 是否在 bbox1 的左侧
-//        if (bbox2Right < bbox1Left) {
-//            result += "西";
-//        }
-//        // 检查 bbox2 是否在 bbox1 的上方
-//        if (bbox2Bottom > bbox1Top) {
-//            result += "北";
-//        }
-//        // 检查 bbox2 是否在 bbox1 的下方
-//        if (bbox2Top < bbox1Bottom) {
-//            result += "南";
-//        }
-
-        // 如果结果为空，使用 GetDirection 方法
-        if("".equals(result)){
-          //  result = GetDirection(bbox1,bbox2);
-              result = String.valueOf(GetDirectionNew(bbox1,bbox2));
-        }
-
-        log.info("明显方位:{}",result);
+        log.info("方位角:{}",result);
 
         return result;
     }

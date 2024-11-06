@@ -1,4 +1,4 @@
-package com.Util.road;
+package com.Util.filter;
 
 import com.Common.PathCommon;
 import org.neo4j.driver.*;
@@ -11,7 +11,7 @@ import java.util.Map;
 public class RoadFilter {
     public static ArrayList<String[]> roadFilter(Driver driver, Boolean[] roadRelation, ArrayList<String[]> list, Map<String[], Double> map){
         String labelName = PathCommon.caoTuLabel;//  需要去查询的图层
-       // System.out.println(list.toString());
+        System.out.println(list.toString());
         try (Session session = driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
                 int listSize = list.size();

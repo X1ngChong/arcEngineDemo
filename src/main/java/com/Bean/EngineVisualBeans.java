@@ -1,8 +1,10 @@
 package com.Bean;
 
 import com.Common.PathCommon;
+import com.Service.impl.Neo4jGetGroupNodesImpl;
 import com.Service.impl.Neo4jServiceImpl;
 import com.Util.*;
+import com.demo.impl.GetMeetMethodImpl;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
@@ -26,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author JXS
@@ -62,26 +65,19 @@ public class EngineVisualBeans {
 
         log.info("初始化中");
 
-        //SearchDemo9 searchList = new SearchDemo9();
-        SearchFromReal searchList = new SearchFromReal();
+        GetMeetMethodImpl g = new GetMeetMethodImpl();
+        List<Integer[]> realResultList = g.getRealResultList();
+        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
+        list  = test.getNodeListByIds(realResultList);
 
-        /*
-         草图数据
-         */
-
-        // list = searchDemo.searchDemo("zhangpengtao");
-
-//        list = searchList.searchDemo(labelName);
-
-        if(methodID == null){
-            list = searchList.searchDemo("building");
-        }else if (methodID == 1){
-            list = searchList.searchDemo("building");
-        }
-
-
-
-       // ListUtils sorter = new ListUtils();//统计每个第一个元素出现的次数，然后执行排序和过滤操作(区域的展示)
+//        SearchFromReal searchList = new SearchFromReal();
+//
+//
+//        if(methodID == null){
+//            list = searchList.searchDemo("building");
+//        }else if (methodID == 1){
+//            list = searchList.searchDemo("building");
+//        }
 
 
 

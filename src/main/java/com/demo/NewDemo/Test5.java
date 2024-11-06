@@ -8,12 +8,12 @@ import java.util.List;
 import static org.neo4j.driver.Values.parameters;
 
 /**
- * 为组节点创建next_to关系 这个关系是相互的
+ * 为组节点创建next_to关系 添加了双向关系
  */
 public class Test5 {
 
-    //public static final String LAYER_NAME = "xianLinTest"; // 设置道路节点所在图层的名称
-    public static final String LAYER_NAME = "xianLinRoad"; // 设置道路节点所在图层的名称
+   // public static final String LAYER_NAME = "xianLinTest"; // 设置道路节点所在图层的名称
+   public static final String LAYER_NAME = "xianLinRoad"; // 设置道路节点所在图层的名称
 
     //public final static String Relationship = "CONTAINS";//草图的关系
     public final static String Relationship = "Have";//真实图谱的关系
@@ -69,7 +69,7 @@ public class Test5 {
                         "toString(centerX1) + ' ' + toString(centerY1) + ', ' + " +
                         "toString(centerX2) + ' ' + toString(centerY2) + ')' AS line " +
                         "CALL spatial.intersects('" + LAYER_NAME + "', line) YIELD node " +
-                     //   "WHERE 'road' IN labels(node) " +  //计算草图的时候给他放开
+                      //  "WHERE 'road' IN labels(node) " +  //计算草图的时候给他放开
                         " RETURN COUNT(node) AS count ";
 
         Result result = session.run(cypherQuery, parameters("buildingId1", group1, "buildingId2", group2));
@@ -88,7 +88,8 @@ public class Test5 {
         String createRelationshipQuery =
                 "MATCH (b1), (b2) " +
                         "WHERE id(b1) = $buildingId1 AND id(b2) = $buildingId2 " +
-                        "CREATE (b1)-[:NEXT_TO]->(b2)";
+                        "MERGE (b1)-[:NEXT_TO]->(b2) " +
+                        "MERGE (b2)-[:NEXT_TO]->(b1)";
 
         session.run(createRelationshipQuery, parameters("buildingId1", group1, "buildingId2", group2));
         System.out.println("创建next_to关系 " + group1 + " and " + group2);
