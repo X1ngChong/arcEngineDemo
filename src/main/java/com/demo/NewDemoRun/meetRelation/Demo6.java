@@ -1,4 +1,4 @@
-package com.demo.NewDemoRun;
+package com.demo.NewDemoRun.meetRelation;
 
 import com.Bean.GroupRelationship;
 import org.neo4j.driver.*;

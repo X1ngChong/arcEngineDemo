@@ -5,6 +5,7 @@ import com.Service.impl.Neo4jGetGroupNodesImpl;
 import com.Service.impl.Neo4jServiceImpl;
 import com.Util.*;
 import com.demo.impl.GetMeetMethodImpl;
+import com.demo.impl.matrix.GetFinalResultByMatrix;
 import com.esri.arcgis.beans.TOC.TOCBean;
 import com.esri.arcgis.beans.map.MapBean;
 import com.esri.arcgis.beans.toolbar.ToolbarBean;
@@ -17,7 +18,7 @@ import com.esri.arcgis.geometry.Envelope;
 import com.esri.arcgis.geometry.IEnvelope;
 import com.esri.arcgis.system.AoInitialize;
 
-import com.neo4j.real.SearchFromReal;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -65,10 +66,17 @@ public class EngineVisualBeans {
 
         log.info("初始化中");
 
-        GetMeetMethodImpl g = new GetMeetMethodImpl();
-        List<Integer[]> realResultList = g.getRealResultList();
+        GetFinalResultByMatrix getFinalResultByMatrix = new GetFinalResultByMatrix();
+        List<Integer[]> realResultList = getFinalResultByMatrix.getFinalResultByMatrix();
         Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
         list  = test.getNodeListByIds(realResultList);
+
+//        GetMeetMethodImpl g = new GetMeetMethodImpl();
+//        List<Integer[]> realResultList = g.getRealResultList();
+//        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
+//        list  = test.getNodeListByIds(realResultList);
+
+
 
 //        SearchFromReal searchList = new SearchFromReal();
 //

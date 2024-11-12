@@ -1,4 +1,4 @@
-package com.demo.NewDemoRun;
+package com.demo.NewDemoRun.meetRelation;
 
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Path;

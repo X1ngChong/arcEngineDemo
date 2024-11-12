@@ -2,8 +2,8 @@ package com.demo.impl;
 
 import com.Bean.GroupRelationship;
 import com.Bean.RealNodeInfo;
-import com.demo.NewDemoRun.Demo5;
-import com.demo.NewDemoRun.Demo6;
+import com.demo.NewDemoRun.meetRelation.CalculateGroupSim;
+import com.demo.NewDemoRun.meetRelation.Demo6;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class Test {
 
 
 
-        Demo5 d = new Demo5();
+        CalculateGroupSim d = new CalculateGroupSim();
         Map<Integer, List<RealNodeInfo>> sketchToRealMap = d.firstFilter();
         // 输出结果
         

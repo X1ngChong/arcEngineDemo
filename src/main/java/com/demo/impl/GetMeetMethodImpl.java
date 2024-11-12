@@ -2,8 +2,8 @@ package com.demo.impl;
 
 import com.Bean.GroupRelationship;
 import com.Bean.RealNodeInfo;
-import com.demo.NewDemoRun.Demo5;
-import com.demo.NewDemoRun.Demo6;
+import com.demo.NewDemoRun.meetRelation.CalculateGroupSim;
+import com.demo.NewDemoRun.meetRelation.Demo6;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ public class GetMeetMethodImpl {
         // 创建邻接矩阵
         int[][] adjacencyMatrix = createAdjacencyMatrix(caoTuMeetsList, blockIds, n);
 
-        Demo5 demo5 = new Demo5();
+        CalculateGroupSim demo5 = new CalculateGroupSim();
         Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter();
 
         // 处理每个真实节点 ID 的组合
@@ -108,7 +108,7 @@ public class GetMeetMethodImpl {
             int[][] tempMatrix = createTempAdjacencyMatrix(realMeetsList, realBlockIds, realBlockIds.length);
             if (areMatricesEqual(adjacencyMatrix, tempMatrix)) {
 //                System.out.println("第" + count++ + "次打印");
-//                 printMatrix(tempMatrix);
+                 printMatrix(tempMatrix);
                 realResultList.add(realBlockIds.clone());
                 System.out.println(Arrays.toString(realBlockIds));
             }

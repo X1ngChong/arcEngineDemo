@@ -1,4 +1,4 @@
-package com.demo.NewDemoRun;
+package com.demo.NewDemoRun.meetRelation;
 
 import com.Bean.RealNodeInfo;
 import org.neo4j.driver.*;
@@ -10,15 +10,20 @@ import java.util.*;
 
 /**
  * 计算Group的相似度
+ * 草图节点 ID: 112, 真实节点 ID: [RealNodeInfo{realNodeId=99, similarity=1.0}, RealNodeInfo{realNodeId=98, similarity=0.8}, RealNodeInfo{realNodeId=95, similarity=0.8}, RealNodeInfo{realNodeId=100, similarity=0.75}, RealNodeInfo{realNodeId=93, similarity=0.75}, RealNodeInfo{realNodeId=94, similarity=0.75}, RealNodeInfo{realNodeId=96, similarity=0.7142857142857143}, RealNodeInfo{realNodeId=101, similarity=0.6666666666666666}, RealNodeInfo{realNodeId=91, similarity=0.6666666666666666}, RealNodeInfo{realNodeId=92, similarity=0.6333333333333333}, RealNodeInfo{realNodeId=97, similarity=0.5416666666666666}]
+ * 草图节点 ID: 113, 真实节点 ID: [RealNodeInfo{realNodeId=92, similarity=1.0}, RealNodeInfo{realNodeId=96, similarity=0.8571428571428572}, RealNodeInfo{realNodeId=100, similarity=0.8166666666666667}, RealNodeInfo{realNodeId=93, similarity=0.8166666666666667}, RealNodeInfo{realNodeId=94, similarity=0.8166666666666667}, RealNodeInfo{realNodeId=98, similarity=0.7}, RealNodeInfo{realNodeId=95, similarity=0.7}, RealNodeInfo{realNodeId=97, similarity=0.65}, RealNodeInfo{realNodeId=99, similarity=0.6333333333333333}, RealNodeInfo{realNodeId=101, similarity=0.6}, RealNodeInfo{realNodeId=91, similarity=0.4666666666666667}]
+ * 草图节点 ID: 110, 真实节点 ID: [RealNodeInfo{realNodeId=98, similarity=0.8}, RealNodeInfo{realNodeId=95, similarity=0.8}, RealNodeInfo{realNodeId=97, similarity=0.7083333333333333}, RealNodeInfo{realNodeId=99, similarity=0.6666666666666666}, RealNodeInfo{realNodeId=101, similarity=0.6666666666666666}, RealNodeInfo{realNodeId=91, similarity=0.6666666666666666}, RealNodeInfo{realNodeId=92, similarity=0.4666666666666667}, RealNodeInfo{realNodeId=100, similarity=0.41666666666666663}, RealNodeInfo{realNodeId=93, similarity=0.41666666666666663}, RealNodeInfo{realNodeId=94, similarity=0.41666666666666663}, RealNodeInfo{realNodeId=96, similarity=0.38095238095238093}]
+ * 草图节点 ID: 111, 真实节点 ID: [RealNodeInfo{realNodeId=100, similarity=1.0}, RealNodeInfo{realNodeId=93, similarity=1.0}, RealNodeInfo{realNodeId=94, similarity=1.0}, RealNodeInfo{realNodeId=96, similarity=0.9285714285714286}, RealNodeInfo{realNodeId=92, similarity=0.8166666666666667}, RealNodeInfo{realNodeId=99, similarity=0.75}, RealNodeInfo{realNodeId=98, similarity=0.7166666666666667}, RealNodeInfo{realNodeId=95, similarity=0.7166666666666667}, RealNodeInfo{realNodeId=101, similarity=0.5833333333333334}, RealNodeInfo{realNodeId=97, similarity=0.5833333333333333}, RealNodeInfo{realNodeId=91, similarity=0.41666666666666663}]
+ * @author JXS
  */
-public class Demo5 {
+public class CalculateGroupSim {
     private static final double OMEGA1 = 0.5;
     private static final double OMEGA2 = 0.5;
     private static final double SIM_VALUE = 0.3;
 
 
     public static void main(String[] args) {
-        Demo5 d = new Demo5();
+        CalculateGroupSim d = new CalculateGroupSim();
         Map<Integer, List<RealNodeInfo>> sketchToRealMap = d.firstFilter();
         // 输出结果
         sketchToRealMap.forEach((sketchId, realNodeInfos) -> {

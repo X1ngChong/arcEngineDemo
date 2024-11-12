@@ -64,6 +64,36 @@ public class CalculateLocation {
         return angleInDegrees;
     }
 
+
+    /**
+     * 获取角度并转化为八方位
+     * @param bbox1
+     * @param bbox2
+     * @return
+     */
+    public static String getBaFangWei(List<Object> bbox1, List<Object> bbox2) {
+        double jiaodu = getAngle(bbox1, bbox2);
+        if ((jiaodu <= 22.5) || (jiaodu > 337.5))
+            return "North";
+        else if ((jiaodu > 22.5) && (jiaodu <= 67.5))
+            return "NorthEast";
+        else if ((jiaodu > 67.5) && (jiaodu <= 112.5))
+            return "East";
+        else if ((jiaodu > 112.5) && (jiaodu <= 157.5))
+            return "SouthEast";
+        else if ((jiaodu > 157.5) && (jiaodu <= 202.5))
+            return "South";
+        else if ((jiaodu > 202.5) && (jiaodu <= 247.5))
+            return "SouthWest";
+        else if ((jiaodu > 247.5) && (jiaodu <= 292.5))
+            return "West";
+        else if ((jiaodu > 292.5) && (jiaodu <= 337.5))
+            return "NorthWest";
+        else
+            return "";
+
+    }
+
     /**
      * 精确计算方位 用于处理原始地图方位
      * @param bbox1

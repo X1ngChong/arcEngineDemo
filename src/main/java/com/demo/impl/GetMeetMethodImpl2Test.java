@@ -1,8 +1,9 @@
 package com.demo.impl;
 
 import com.Bean.GroupRelationship;
-import com.demo.NewDemoRun.Demo5;
-import com.demo.NewDemoRun.Demo6;
+
+import com.demo.NewDemoRun.meetRelation.CalculateGroupSim;
+import com.demo.NewDemoRun.meetRelation.Demo6;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 public class GetMeetMethodImpl2Test {
     public static void main(String[] args) {
         Demo6 d6 = new Demo6();
-        Demo5 d5 = new Demo5();
+        CalculateGroupSim d5 = new CalculateGroupSim();
 
         List<Integer> caoTuIds = new ArrayList<>();
         List<GroupRelationship> realMeetsList = d6.getMeetList("xianLinGroup");
