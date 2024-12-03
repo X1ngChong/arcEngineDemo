@@ -36,8 +36,6 @@ import java.util.List;
  */
 @Slf4j
 public class EngineVisualBeans {
-
-
     public Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
 
     //从neo4j获取的数据,主要的数据储存地
@@ -68,6 +66,8 @@ public class EngineVisualBeans {
 
         GetFinalResultByMatrix getFinalResultByMatrix = new GetFinalResultByMatrix();
         List<Integer[]> realResultList = getFinalResultByMatrix.getFinalResultByMatrix();
+        log.info("共有{}条数据",realResultList.size());
+        log.info("数据内容为:{}",realResultList);
         Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
         list  = test.getNodeListByIds(realResultList);
 
@@ -86,8 +86,6 @@ public class EngineVisualBeans {
 //        }else if (methodID == 1){
 //            list = searchList.searchDemo("building");
 //        }
-
-
 
 
 
@@ -263,8 +261,8 @@ public class EngineVisualBeans {
         selectNameButton.setBounds(150, 300, 120, 30);
 
         //创建选择不同方法的按钮
-        JButton showMethodButton1 = new JButton("方法一");
-        JButton showMethodButton2 = new JButton("方法二");
+        JButton showMethodButton1 = new JButton("全局匹配");
+        JButton showMethodButton2 = new JButton("局部匹配");
 
         showMethodButton1.addActionListener(e -> {
             // 在按钮点击时执行的方法

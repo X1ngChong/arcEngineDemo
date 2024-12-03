@@ -1,6 +1,7 @@
-package com.demo.NewDemoRun.meetRelation;
+package com.demo.overall.NewDemoRun.meetRelation;
 
 import com.Bean.RealNodeInfo;
+import com.Common.DriverCommon;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Path;
 
@@ -33,7 +34,8 @@ public class CalculateGroupSim {
     }
     public Map<Integer, List<RealNodeInfo>> firstFilter() {
         Map<Integer, List<RealNodeInfo>> sketchToRealMap = new HashMap<>();
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (DriverCommon driverCommon = new DriverCommon();
+             Driver driver = driverCommon.getGraphDatabase();
              Session session = driver.session()) {
 
             Map<Integer, NodeData> realData = new HashMap<>();

@@ -1,5 +1,6 @@
 package com.demo.NewDemo;
 
+import com.Common.InfoCommon;
 import org.neo4j.driver.*;
 
 import java.util.*;
@@ -11,9 +12,24 @@ public class Test4 {
     //public final static String Relationship = "CONTAINS";//草图的关系
     public final static String Relationship = "Have";//真实图谱的关系
 
+//    public static void main(String[] args) {
+//        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+//             Session session = driver.session()) {
+//
+//            // 查找所有的组节点的ID
+//            List<Integer> fatherIds  = fetchFatherIds(session);
+//
+//            System.out.println(fatherIds);
+//            System.out.println("连接成功");
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
     public static void main(String[] args) {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
-             Session session = driver.session()) {
+        try ( Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+              Session session = driver.session()) {
 
 
             // 查找所有的组节点的ID

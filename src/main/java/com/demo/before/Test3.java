@@ -1,5 +1,6 @@
 package com.demo.before;
 
+import com.Common.InfoCommon;
 import org.neo4j.driver.*;
 
 import java.awt.geom.Line2D;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 public class Test3 {
 
     public static void main() {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
              Session session = driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
                 // 执行 Cypher 查询

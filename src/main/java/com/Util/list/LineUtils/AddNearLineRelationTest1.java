@@ -1,6 +1,7 @@
 package com.Util.list.LineUtils;
 
 import com.Bean.Point;
+import com.Common.InfoCommon;
 import com.Common.PathCommon;
 import com.Util.Neo4jCalculatePointUtil;
 import org.neo4j.driver.*;
@@ -19,7 +20,7 @@ public final static String  LAYER_NAME = "xianLinRoad";
 
         int i = 0;
         try {
-            Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+            Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
             Session session = driver.session();
             try (Transaction tx = session.beginTransaction()) {
 

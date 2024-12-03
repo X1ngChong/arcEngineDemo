@@ -1,5 +1,6 @@
 package com.demo.NewDemo;
 
+import com.Common.DriverCommon;
 import org.neo4j.driver.*;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public class Test5 {
     //public final static String Relationship = "CONTAINS";//草图的关系
     public final static String Relationship = "Have";//真实图谱的关系
     public static void main(String[] args) {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (DriverCommon driverCommon = new DriverCommon();
+             Driver driver = driverCommon.getGraphDatabase();
              Session session = driver.session()) {
 
             // 查找所有的building节点

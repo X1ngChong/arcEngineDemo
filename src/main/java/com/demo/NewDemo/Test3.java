@@ -1,5 +1,6 @@
 package com.demo.NewDemo;
 
+import com.Common.InfoCommon;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -23,7 +24,7 @@ public class Test3 {
     public static List<Integer> roadIDs = new ArrayList<>(); // 初始化roadIDs
 
     public static void main(String[] args) {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
              Session session = driver.session()) {
 
             // 查找所有的building节点

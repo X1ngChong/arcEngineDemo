@@ -2,8 +2,8 @@ package com.demo.impl;
 
 import com.Bean.GroupRelationship;
 
-import com.demo.NewDemoRun.meetRelation.CalculateGroupSim;
-import com.demo.NewDemoRun.meetRelation.Demo6;
+import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
+import com.demo.overall.NewDemoRun.meetRelation.Demo6;
 
 import java.util.*;
 

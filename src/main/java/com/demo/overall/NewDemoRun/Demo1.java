@@ -1,6 +1,7 @@
-package com.demo.NewDemoRun;
+package com.demo.overall.NewDemoRun;
 
-import com.demo.NewDemoRun.meetRelation.NodeData;
+import com.Common.InfoCommon;
+import com.demo.overall.NewDemoRun.meetRelation.NodeData;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Path;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class Demo1 {
     public static void main(String[] args) {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
              Session session = driver.session()) {
 
             // 收集真实数据

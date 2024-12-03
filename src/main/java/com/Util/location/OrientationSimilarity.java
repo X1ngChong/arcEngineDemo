@@ -49,8 +49,8 @@ public class OrientationSimilarity {
     }
 
     public static void main(String[] args) {
-        String orientation1 = "North"; // 输入的第一个方位
-        String orientation2 = "SouthEast"; // 输入的第二个方位
+        String orientation1 = "West"; // 输入的第一个方位
+        String orientation2 = "NorthEast"; // 输入的第二个方位
 
         double similarity = calculateSimilarity(orientation1, orientation2);
         System.out.println("相似度: " + similarity);

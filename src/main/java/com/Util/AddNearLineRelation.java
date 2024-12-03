@@ -3,6 +3,7 @@ package com.Util;
 
 import com.Bean.Line;
 import com.Bean.Point;
+import com.Common.InfoCommon;
 import com.esri.arcgis.geoprocessing.tools.analysistools.Intersect;
 import org.neo4j.driver.*;
 
@@ -19,7 +20,7 @@ public class AddNearLineRelation {
     public static void main(String[] args) {
         int i = 0;
         try  {
-            Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+            Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
             Session session = driver.session();
             try (Transaction tx = session.beginTransaction()) {
                 // 执行 Cypher 查询    分批次执行

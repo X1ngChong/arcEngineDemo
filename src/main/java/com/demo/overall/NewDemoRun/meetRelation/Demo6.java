@@ -1,6 +1,7 @@
-package com.demo.NewDemoRun.meetRelation;
+package com.demo.overall.NewDemoRun.meetRelation;
 
 import com.Bean.GroupRelationship;
+import com.Common.DriverCommon;
 import org.neo4j.driver.*;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 public class Demo6 {
     public static void main(String[] args) {
         Demo6 d6 = new Demo6();
-        List<GroupRelationship> meetsList = d6.getMeetList("Group");
+        List<GroupRelationship> meetsList = d6.getMeetList("xianLinGroup");
         // 输出结果
         System.out.println("相邻关系:");
         meetsList.forEach(System.out::println);
@@ -39,7 +40,8 @@ public class Demo6 {
     public  List<GroupRelationship>  getMeetList(String label) {
         List<GroupRelationship> meetsList = new ArrayList<>();
         // 创建 Neo4j 驱动
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
+        try (DriverCommon driverCommon = new DriverCommon();
+             Driver driver = driverCommon.getGraphDatabase();
              Session session = driver.session()) {
 
             // 存储相邻关系

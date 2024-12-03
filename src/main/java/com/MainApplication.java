@@ -1,13 +1,11 @@
 package com;
 
-import com.Bean.EngineVisualBeans;
-import com.Common.PathCommon;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 import java.awt.*;
-
 
 /**
  * @author JXS
@@ -30,13 +28,14 @@ public class MainApplication  {
 
         SpringApplication.run(MainApplication.class,args);
 
-        try {
-            //初始化AE，初始化界面
-            EngineVisualBeans engineVisualBeans = new EngineVisualBeans();
-            engineVisualBeans.initialVisual(PathCommon.initMXD,null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        //本地运行
+//        try {
+//            //初始化AE，初始化界面
+//            EngineVisualBeans engineVisualBeans = new EngineVisualBeans();
+//            engineVisualBeans.initialVisual(PathCommon.initMXD,null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     }
 

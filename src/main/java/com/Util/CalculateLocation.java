@@ -4,6 +4,7 @@ package com.Util;
 import com.Common.PathCommon;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,23 @@ import java.util.List;
  */
 @Slf4j
 public class CalculateLocation {
+    public static void main(String[] args) {
+        // 第一个边界框
+        List<Object> bbox1 = new ArrayList<>();
+        bbox1.add(118.96797785741447);
+        bbox1.add(32.126722708664865);
+        bbox1.add(118.9775057211066);
+        bbox1.add(32.12339042522742);
+
+        // 第二个边界框
+        List<Object> bbox2 = new ArrayList<>();
+        bbox2.add(118.97724325579647);
+        bbox2.add(32.124584604153185);
+        bbox2.add(118.98612164673008);
+        bbox2.add(32.12262082424896);
+        String baFangWei = getBaFangWei(bbox1, bbox2);
+        System.out.println(baFangWei);
+    }
 
     /**
      * 计算中心点
@@ -50,6 +68,14 @@ public class CalculateLocation {
         double x2 = center2[0];
         double y2 = center2[1];
 
+//        double deg2rad = Math.PI /180;
+//        double dlat = (y2-y1) *deg2rad;
+//        double dlon = (x2-x1) *deg2rad;
+//        double y = Math.sin(dlon) *Math.cos(y2 * deg2rad);
+//        double x = Math.cos(y1 *deg2rad) *Math.sin(y2*deg2rad) - Math.sin(y1*deg2rad)*Math.cos(y2*deg2rad)*Math.cos(dlon);
+
+        //double angleInRadians = Math.atan2(y,x);
+
         // 计算两点之间的角度（弧度）
         double angleInRadians = Math.atan2(y2 - y1, x2 - x1);
 
@@ -74,21 +100,21 @@ public class CalculateLocation {
     public static String getBaFangWei(List<Object> bbox1, List<Object> bbox2) {
         double jiaodu = getAngle(bbox1, bbox2);
         if ((jiaodu <= 22.5) || (jiaodu > 337.5))
-            return "North";
+            return "East";
         else if ((jiaodu > 22.5) && (jiaodu <= 67.5))
             return "NorthEast";
         else if ((jiaodu > 67.5) && (jiaodu <= 112.5))
-            return "East";
+            return "North";
         else if ((jiaodu > 112.5) && (jiaodu <= 157.5))
-            return "SouthEast";
+            return "NorthWest";
         else if ((jiaodu > 157.5) && (jiaodu <= 202.5))
-            return "South";
+            return "West";
         else if ((jiaodu > 202.5) && (jiaodu <= 247.5))
             return "SouthWest";
         else if ((jiaodu > 247.5) && (jiaodu <= 292.5))
-            return "West";
+            return "South";
         else if ((jiaodu > 292.5) && (jiaodu <= 337.5))
-            return "NorthWest";
+            return "SouthEast";
         else
             return "";
 

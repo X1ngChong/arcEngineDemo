@@ -1,5 +1,6 @@
-package com.demo.NewDemoRun;
+package com.demo.overall.NewDemoRun;
 
+import com.Common.InfoCommon;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
@@ -29,8 +30,8 @@ import java.util.Map;
 
 public class Demo2 {
     public static void main(String[] args) {
-        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
-             Session session = driver.session()) {
+        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+             Session session = driver.session()){
 
             // Collect real map data types and counts
             Map<String, Integer> realMapTypeCount = collectDataFromDb(session, "MATCH p=()-[r:Have]->() RETURN p");
