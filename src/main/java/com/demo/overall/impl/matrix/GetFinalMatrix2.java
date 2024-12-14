@@ -1,8 +1,9 @@
-package com.demo.impl.matrix;
+package com.demo.overall.impl.matrix;
 
 import com.Bean.PathResult;
 import com.Bean.RealNodeInfo;
 import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -114,6 +115,7 @@ import java.util.*;
  进程已结束,退出代码0
 
  */
+@Component
 public class GetFinalMatrix2 {
     public static void main(String[] args) {
         GetFinalMatrix2 getFinalMatrix = new GetFinalMatrix2();

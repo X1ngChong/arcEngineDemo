@@ -2,6 +2,10 @@
 logging:
   level:
     io.netty: WARN
+spring:
+  redis:
+    host: 8.149.246.32
+    port: 6379
 
 
 

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 用于在实际图谱的Near关系上添加俩个地物是否经过道路
  * @author JXS
  */
 public class AddNearLineRelationTest1 {

@@ -1,4 +1,4 @@
-package com.demo.impl;
+package com.demo.overall.impl;
 
 import com.Bean.GroupRelationship;
 import com.Bean.RealNodeInfo;
@@ -48,8 +48,6 @@ public class GetMeetMethodImpl {
         for (Integer[] i : realResultList){
             System.out.println(Arrays.toString(i));
         }
-
-
     }
 
     static int count = 0;

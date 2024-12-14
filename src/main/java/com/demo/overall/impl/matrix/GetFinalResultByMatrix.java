@@ -1,8 +1,9 @@
-package com.demo.impl.matrix;
+package com.demo.overall.impl.matrix;
 
 import com.Bean.PathResult;
 import com.Bean.RealNodeInfo;
 import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,19 +115,20 @@ import java.util.Map;
  99:[93, 91, 101, 97]
  * @author JXS
  */
+@Component
 public class GetFinalResultByMatrix {
     public static void main(String[] args) {
         GetFinalResultByMatrix getFinalResultByMatrix = new GetFinalResultByMatrix();
         List<Integer[]> finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix();
+        GetFinalMatrix2 getFinalMatrix = new GetFinalMatrix2();
+        List<PathResult> resulyList = getFinalMatrix.getResulyList();
                     // 格式化输出
             System.out.println("真实结果列表:");
-            int i = 0;
-            for (Integer[] realResult : finalResultByMatrix) {
-                System.out.println(i++ +":"+ Arrays.toString(realResult));
-                if (i==100){
-                    break;
-                }
-            }
+       for (int i = 0; i < 100 ; i++) {
+           System.out.println(i+":"+ Arrays.toString(finalResultByMatrix.get(i))+
+                   ":"+ Arrays.toString(resulyList.get(i).getPath().stream().limit(4).toArray()));
+       }
+
     }
     public   List<Integer[]> getFinalResultByMatrix() {
         CalculateGroupSim d = new CalculateGroupSim();

@@ -1,4 +1,4 @@
-package com.demo.impl;
+package com.demo.overall.impl;
 
 import com.Bean.GroupRelationship;
 import com.demo.overall.NewDemoRun.meetRelation.Demo6;

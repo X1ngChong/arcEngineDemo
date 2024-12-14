@@ -26,6 +26,9 @@ public class PathCommon {
     public static final String initMXD = "testS10";//查询节点的type属性wandaoma叫type 而真实图谱叫fclass
 
 
+    public static final String RealGroupTags = "xianLinGroup";//真实图谱的组名
+    public static final String CaoTuGroupTags = "Group";//草图图谱的组名
+
     public static final Double ANGLE_RANGE = 50.0;//设置角度范围
 
 

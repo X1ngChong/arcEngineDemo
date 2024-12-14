@@ -1,4 +1,4 @@
-package com.demo.impl.matrix;
+package com.demo.overall.impl.matrix;
 
 import com.Bean.GroupLocationRelationship;
 import com.Bean.RealNodeInfo;
@@ -210,11 +210,13 @@ public class GetLocationRelationshipsMatrix {
     // 根据 ID 获取方位的方法
     private static String getOrientation(int id1, int id2, Map<Integer, List<GroupLocationRelationship>> relationships) {
         //if (relationships.containsKey(id1)) {
+        if(relationships.get(id1) != null){
             for (GroupLocationRelationship relationship : relationships.get(id1)) {
                 if (relationship.getBlock2Id() == id2) {
                     return relationship.getLocationRelationship(); // 返回方位
                 }
             }
+        }
         //}
         return null; // 如果没有找到，返回 null
     }

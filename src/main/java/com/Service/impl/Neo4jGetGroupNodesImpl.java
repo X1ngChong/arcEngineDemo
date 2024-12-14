@@ -4,7 +4,7 @@ import com.Common.DriverCommon;
 import com.Common.InfoCommon;
 import com.Common.PathCommon;
 import com.Service.Neo4jGetGroupNodes;
-import com.demo.impl.GetMeetMethodImpl;
+import com.demo.overall.impl.GetMeetMethodImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 
