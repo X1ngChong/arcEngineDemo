@@ -1,8 +1,12 @@
 package com.controller;
 
+import com.Bean.PathResult;
+import com.Service.Neo4jGetGroupNodesService;
 import com.Service.PartService;
-import com.Service.impl.Neo4jGetGroupNodesImpl;
+import com.demo.overall.impl.matrix.GetFinalMatrix2;
 import com.demo.overall.impl.matrix.GetFinalResultByMatrix;
+
+import com.redis.RedisService;
 import com.response.ResponseData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +26,38 @@ public class DataController {
 
     @Resource
     private PartService partService;
+
+    @Resource
+    private RedisService redisService;
+
+    @Resource
+    private GetFinalResultByMatrix getFinalResultByMatrix;
+
+    @Resource
+    private GetFinalMatrix2 getFinalMatrix;
+
+    @Resource
+    private Neo4jGetGroupNodesService neo4jGetGroupNodesService;
     @GetMapping("/S10AndXianLin2")
     public ResponseData<ArrayList<Integer[]>> getS10AndXianLin2() {
-        GetFinalResultByMatrix getFinalResultByMatrix = new GetFinalResultByMatrix();
-        List<Integer[]> realResultList = getFinalResultByMatrix.getFinalResultByMatrix();
-        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
+        List<Integer[]> finalResultByMatrix = null;
+        finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
+
+        if(finalResultByMatrix == null){
+            // GetFinalResultByMatrix 获取路径
+            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+            //存储数据
+            if (finalResultByMatrix != null) {
+                redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
+            }
+        }
 
         //获取OBJECTID作为主键去查找
-        ArrayList<Integer[]> list = test.getObjectIdByIds(realResultList);
+        ArrayList<Integer[]> list = neo4jGetGroupNodesService.getObjectIdByIds(finalResultByMatrix);
+        for (Integer [] temp:list
+             ) {
+            log.info("结果列表:{}",Arrays.toString(temp));
+        }
         return ResponseData.succeed(list);
     }
 
@@ -73,6 +101,60 @@ public class DataController {
             log.info("Values: " + Arrays.toString(array) + ", Average: " + average);
         }
         return ResponseData.succeed();
+    }
+
+    @GetMapping("/getPartSim2")
+    public ResponseData getPartSim2() {
+        List<Double[]> partSim1List = partService.getPartSim2();
+        for (Double[] array : partSim1List) {
+            // 计算平均值
+            double sum = 0.0;
+            int count = 0;
+            for (Double value : array) {
+                if (value != null) {
+                    sum += value;
+                    count++;
+                }
+            }
+            double average = count > 0 ? sum / count : 0.0;
+
+            // 记录整个 Double[] 数组和平均值
+            log.info("Values: " + Arrays.toString(array) + ", Average: " + average);
+        }
+        return ResponseData.succeed();
+    }
+
+    @GetMapping("/getPartSim3")
+    public ResponseData getPartSim3() {
+        List<Double[]> partSim1List = partService.getPartSim3();
+        for (Double[] array : partSim1List) {
+            // 计算平均值
+            double sum = 0.0;
+            int count = 0;
+            for (Double value : array) {
+                if (value != null) {
+                    sum += value;
+                    count++;
+                }
+            }
+            double average = count > 0 ? sum / count : 0.0;
+
+            // 记录整个 Double[] 数组和平均值
+            log.info("Values: " + Arrays.toString(array) + ", Average: " + average);
+        }
+        return ResponseData.succeed();
+    }
+    @GetMapping("/getPartSim")
+    public ResponseData getPartSim() {
+        List<Integer[]> finalList = partService.getFinalList();
+        //获取OBJECTID作为主键去查找
+        ArrayList<Integer[]> list = neo4jGetGroupNodesService.getObjectIdByIds(finalList);
+        for (Integer [] temp:list
+        ) {
+            log.info("结果列表:{}",Arrays.toString(temp));
+        }
+
+        return ResponseData.succeed(list);
     }
 
 }

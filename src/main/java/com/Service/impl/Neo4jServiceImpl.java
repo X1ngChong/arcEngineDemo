@@ -154,8 +154,8 @@ public class Neo4jServiceImpl implements Neo4jService {
                     }
 
                     // 计算相似性
-                    int totalCount = count1 + count2; // 总数量
-                    double similarity = totalCount > 0 ? (double) (commonCount *2) / totalCount : 0.0;
+                    int totalCount = Math.max(count1, count2); // 最大的方位数量
+                    double similarity = totalCount > 0 ? (double) commonCount / totalCount : 0.0;
 
                     // 更新最高相似度
                     if (similarity > highestSimilarity) {
@@ -176,8 +176,108 @@ public class Neo4jServiceImpl implements Neo4jService {
         return highestSimilarity;
     }
 
+    @Override
+    public Double getPartDistance(Integer groupId1,Integer groupId2) {
+        double highestSimilarity = 0.0; // 用于存储最高相似度
+        Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+        try (Session session = driver.session()) {
+            // 获取 groupId1 的 location
+            Map<Integer, Map<String, Integer>> distancesGroup1 = getDistances(session, groupId1);
+            // 获取 groupId2 的 location
+            Map<Integer, Map<String, Integer>> distancesGroup2 = getDistances(session, groupId2);
+
+
+            Integer bestMId1 = null; // 存储最佳 mId1
+            Integer bestMId2 = null; // 存储最佳 mId2
+
+            // 遍历 group1 中的每个 mId
+            for (Map.Entry<Integer, Map<String, Integer>> entry1 : distancesGroup1.entrySet()) {
+                Integer mId1 = entry1.getKey();
+                Map<String, Integer> locationCountMap1 = entry1.getValue();
+                int count1 = calculateTotalCount(locationCountMap1); // 获取 count1 的数量
+
+                // 遍历 group2 中的每个 mId
+                for (Map.Entry<Integer, Map<String, Integer>> entry2 : distancesGroup2.entrySet()) {
+                    Integer mId2 = entry2.getKey();
+                    Map<String, Integer> locationCountMap2 = entry2.getValue();
+                    int count2 = calculateTotalCount(locationCountMap2); // 获取 count2 的数量
+
+                    // 计算相同 location 的数量
+                    int commonCount = 0;
+                    for (String location : locationCountMap1.keySet()) {
+                        commonCount += Math.min(locationCountMap1.getOrDefault(location,0), locationCountMap2.getOrDefault(location, 0));
+                    }
+
+                    // 计算相似性
+                    int totalCount = Math.max(count1, count2); // 最大的方位数量
+                    double similarity = totalCount > 0 ? (double) commonCount / totalCount : 0.0;
+
+                    // 更新最高相似度
+                    if (similarity > highestSimilarity) {
+                        highestSimilarity = similarity;
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return highestSimilarity;
+    }
+
+    @Override
+    public Double getPartOrderSim(Integer groupId1,Integer groupId2) {
+        double highestSimilarity = 0.0; // 用于存储最高相似度
+        Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+        try (Session session = driver.session()) {
+            // 获取 groupId1 的 location
+            Map<Integer, Map<String, Integer>> distancesGroup1 = getOrders(session, groupId1);
+            // 获取 groupId2 的 location
+            Map<Integer, Map<String, Integer>> distancesGroup2 = getOrders(session, groupId2);
+
+
+            Integer bestMId1 = null; // 存储最佳 mId1
+            Integer bestMId2 = null; // 存储最佳 mId2
+
+            // 遍历 group1 中的每个 mId
+            for (Map.Entry<Integer, Map<String, Integer>> entry1 : distancesGroup1.entrySet()) {
+                Integer mId1 = entry1.getKey();
+                Map<String, Integer> locationCountMap1 = entry1.getValue();
+                int count1 = calculateTotalCount(locationCountMap1); // 获取 count1 的数量
+
+                // 遍历 group2 中的每个 mId
+                for (Map.Entry<Integer, Map<String, Integer>> entry2 : distancesGroup2.entrySet()) {
+                    Integer mId2 = entry2.getKey();
+                    Map<String, Integer> locationCountMap2 = entry2.getValue();
+                    int count2 = calculateTotalCount(locationCountMap2); // 获取 count2 的数量
+
+                    // 计算相同 location 的数量
+                    int commonCount = 0;
+                    for (String location : locationCountMap1.keySet()) {
+                        commonCount += Math.min(locationCountMap1.getOrDefault(location,0), locationCountMap2.getOrDefault(location, 0));
+                    }
+
+                    // 计算相似性
+                    int totalCount = Math.max(count1, count2); // 最大的方位数量
+                    double similarity = totalCount > 0 ? (double) commonCount / totalCount : 0.0;
+
+                    // 更新最高相似度
+                    if (similarity > highestSimilarity) {
+                        highestSimilarity = similarity;
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return highestSimilarity;
+    }
+
     /**
-     * 计算没有标志性地物
+     * 计算没有标志性地物 选取左上角的地物计算 (没有使用)
      * @param groupId1
      * @param groupId2
      * @return
@@ -238,25 +338,81 @@ public class Neo4jServiceImpl implements Neo4jService {
 
 
     private  Map<Integer, Map<String, Integer>>  getLocations(Session session,Integer groupId,String type){
+        String cypherQuery = "";
+        if("null".equals(type)){
+            cypherQuery = "MATCH (n)-[]->(m) " +
+                    "WHERE id(n) = " + groupId +
+                    " MATCH (m)-[r:NEAR]->(z) " +
+                    "RETURN id(m) AS mId, r.location AS location";
+        }else{
+            cypherQuery = "MATCH (n)-[]->(m) " +
+                    "WHERE id(n) = " + groupId + " AND m.type = \"" + type + "\" " +
+                    "MATCH (m)-[r:NEAR]->(z) " +
+                    "RETURN id(m) AS mId, r.location AS location";
+        }
 
-        String cypherQuery = "MATCH (n)-[]->(m) " +
-                "WHERE id(n) = " + groupId + " AND m.type = \"" + type + "\" " +
-                "MATCH (m)-[r:NEAR]->(z) " +
-                "RETURN id(m) AS mId, r.location AS location";
 
         Map<Integer, Map<String, Integer>> locationCountMap = new HashMap<>();
         Result result = session.run(cypherQuery);
         while (result.hasNext()) {
             Record record = result.next();
             Integer mId = record.get("mId").asInt(); // 获取 mId
+            String mType = record.get("type").asString(); // 获取类型
             String location = record.get("location").asString();
 
             // 获取或创建 mId 对应的 location 计数 Map
             locationCountMap.putIfAbsent(mId, new HashMap<>());
             Map<String, Integer> innerMap = locationCountMap.get(mId);
-            innerMap.put(location, innerMap.getOrDefault(location, 0) + 1); // 计数
+            innerMap.put(mType+"-"+location, innerMap.getOrDefault(location, 0) + 1); // 计数
         }
         return locationCountMap;
+    }
+
+    private  Map<Integer, Map<String, Integer>>  getOrders(Session session,Integer groupId){
+        String cypherQuery = "";
+            cypherQuery = "MATCH (n)-[]->(m) " +
+                    "WHERE id(n) = " + groupId +
+                    " MATCH (m)-[r:NEAR]->(z) " +
+                    "RETURN id(m) AS mId,m.type as type, r.order AS order";
+
+
+        Map<Integer, Map<String, Integer>> locationCountMap = new HashMap<>();
+        Result result = session.run(cypherQuery);
+        while (result.hasNext()) {
+            Record record = result.next();
+            Integer mId = record.get("mId").asInt(); // 获取 mId
+            String mType = record.get("type").asString(); // 获取类型
+            String order = record.get("order").asString();
+
+            // 获取或创建 mId 对应的 location 计数 Map
+            locationCountMap.putIfAbsent(mId, new HashMap<>());
+            Map<String, Integer> innerMap = locationCountMap.get(mId);
+            innerMap.put(mType+"-"+order, innerMap.getOrDefault(order, 0) + 1); // 用类型+顺序进行计数
+        }
+        return locationCountMap;
+    }
+    private  Map<Integer, Map<String, Integer>>  getDistances(Session session,Integer groupId){
+        String cypherQuery = "";
+            cypherQuery = "MATCH (n)-[]->(m) " +
+                    "WHERE id(n) = " + groupId +
+                    " MATCH (m)-[r:NEAR]->(z) " +
+                    "RETURN id(m) AS mId, m.type as type , r.distance AS distance";
+
+
+        Map<Integer, Map<String, Integer>> distanceCountMap = new HashMap<>();
+        Result result = session.run(cypherQuery);
+        while (result.hasNext()) {
+            Record record = result.next();
+            Integer mId = record.get("mId").asInt(); // 获取 mId
+            String mType = record.get("type").asString(); // 获取类型
+            String distance = record.get("distance").asString();
+
+            // 获取或创建 mId 对应的 location 计数 Map
+            distanceCountMap.putIfAbsent(mId, new HashMap<>());
+            Map<String, Integer> innerMap = distanceCountMap.get(mId);
+            innerMap.put(mType+"-"+distance, innerMap.getOrDefault(distance, 0) + 1); // 计数
+        }
+        return distanceCountMap;
     }
 
     /**
@@ -275,7 +431,7 @@ public class Neo4jServiceImpl implements Neo4jService {
                 " ORDER BY minY ASC, minX ASC  " +
                 " LIMIT 1  " +
                 "MATCH (m)-[r:NEAR]->(z) " +
-                " RETURN id(m) AS mId, r.location AS location ";
+                " RETURN id(m) AS mId,m.type as type, r.location AS location ";
 
         Map<Integer, Map<String, Integer>> locationCountMap = new HashMap<>();
         Result result = session.run(cypherQuery);

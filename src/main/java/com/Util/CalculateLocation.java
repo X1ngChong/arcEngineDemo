@@ -120,6 +120,38 @@ public class CalculateLocation {
 
     }
 
+    // 计算 location 关系
+    public static String getDistanceRelation(Double normalizedDistance) {
+        String distance;
+        if (normalizedDistance <= 0.3) {
+            distance = "SD";
+        } else if (normalizedDistance <= 0.7) {
+            distance = "MD";
+        } else {
+            distance = "LD";
+        }
+        return distance;
+    }
+
+    public static String getOrder(List<Object> bbox1, List<Object> bbox2) {
+        double[] center1 = calculateCenterPoint(bbox1);
+        double[] center2 = calculateCenterPoint(bbox2);
+
+        // 获取中心点的X坐标
+        double x1 = center1[0];
+        double x2 = center2[0];
+
+        // 比较X坐标并返回顺序关系
+        if (x1 < x2) {
+            return "before"; // bbox1在bbox2的左侧
+        } else if (x1 > x2) {
+            return "after"; // bbox1在bbox2的右侧
+        } else {
+            return "equal"; // bbox1和bbox2在X轴上对齐
+        }
+    }
+
+
     /**
      * 精确计算方位 用于处理原始地图方位
      * @param bbox1

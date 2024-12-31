@@ -1,7 +1,7 @@
 package com.Bean;
 
 import com.Common.PathCommon;
-import com.Service.impl.Neo4jGetGroupNodesImpl;
+import com.Service.impl.Neo4jGetGroupNodesServiceImpl;
 import com.Service.impl.Neo4jServiceImpl;
 import com.Util.*;
 import com.demo.overall.impl.matrix.GetFinalResultByMatrix;
@@ -67,7 +67,7 @@ public class EngineVisualBeans {
         List<Integer[]> realResultList = getFinalResultByMatrix.getFinalResultByMatrix();
         log.info("共有{}条数据",realResultList.size());
         log.info("数据内容为:{}",realResultList);
-        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
+        Neo4jGetGroupNodesServiceImpl test = new Neo4jGetGroupNodesServiceImpl();
         list  = test.getNodeListByIds(realResultList);
 
 //        GetMeetMethodImpl g = new GetMeetMethodImpl();

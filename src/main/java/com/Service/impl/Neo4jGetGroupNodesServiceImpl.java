@@ -3,21 +3,23 @@ package com.Service.impl;
 import com.Common.DriverCommon;
 import com.Common.InfoCommon;
 import com.Common.PathCommon;
-import com.Service.Neo4jGetGroupNodes;
+import com.Service.Neo4jGetGroupNodesService;
 import com.demo.overall.impl.GetMeetMethodImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public class Neo4jGetGroupNodesImpl implements Neo4jGetGroupNodes {
+@Service
+public class Neo4jGetGroupNodesServiceImpl implements Neo4jGetGroupNodesService {
     public static void main(String[] args) {
         GetMeetMethodImpl g = new GetMeetMethodImpl();
         List<Integer[]> realResultList = g.getRealResultList();
-        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
+        Neo4jGetGroupNodesServiceImpl test = new Neo4jGetGroupNodesServiceImpl();
         ArrayList<String[]> nodeListByIds = test.getNodeListByIds(realResultList);
         for (String[] s:nodeListByIds){
             System.out.println(Arrays.toString(s));
