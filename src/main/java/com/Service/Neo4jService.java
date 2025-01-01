@@ -19,7 +19,9 @@ public interface Neo4jService {
     Double getPartLocationSimByType(Integer groupId1,Integer groupId2,String type);
     Double getPartDistance(Integer groupId1,Integer groupId2);
 
-     Double getPartOrderSim(Integer groupId1,Integer groupId2);
+     Double getPartOrderSimByNear(Integer groupId1,Integer groupId2);
+    Double getPartOrderSimByNextTo(Integer groupId1,Integer groupId2);
+
 
     Double getPartLocationSimNoType(Integer groupId1,Integer groupId2);
 

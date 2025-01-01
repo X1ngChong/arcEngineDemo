@@ -15,7 +15,9 @@ public interface PartService {
      * 获取每个组相对应的方位相似度
      */
     HashMap<String, Double> getPartSim1Map();
-    HashMap<String, Double> getPartSim2Map();
+    HashMap<String, Double> getPartSim2MapByNearOrder();
+    HashMap<String, Double> getPartSim2MapByNextToOrder();
+
     HashMap<String, Double> getPartSim3Map();
 
     /**

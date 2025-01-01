@@ -5,6 +5,7 @@ import com.Common.DriverCommon;
 import com.Common.InfoCommon;
 import com.Common.PathCommon;
 import com.Service.Neo4jService;
+import com.Util.Next_TO.orderListSim.LCSSim;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.stereotype.Service;
@@ -227,7 +228,7 @@ public class Neo4jServiceImpl implements Neo4jService {
     }
 
     @Override
-    public Double getPartOrderSim(Integer groupId1,Integer groupId2) {
+    public Double getPartOrderSimByNear(Integer groupId1,Integer groupId2) {
         double highestSimilarity = 0.0; // 用于存储最高相似度
         Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
         try (Session session = driver.session()) {
@@ -275,6 +276,36 @@ public class Neo4jServiceImpl implements Neo4jService {
 
         return highestSimilarity;
     }
+
+    @Override
+    public Double getPartOrderSimByNextTo(Integer groupId1, Integer groupId2) {
+        double highestSimilarity = 0.0; // 用于存储最高相似度
+        Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+        try (Session session = driver.session()) {
+            // 获取 groupId1 的 orderList
+            List<List<Object>> orderListGroup1 = getTypeOrderListByGroupId(session, groupId1);
+            // 获取 groupId2 的 orderList
+            List<List<Object>> orderListGroup2 = getTypeOrderListByGroupId(session, groupId2);
+
+            // 遍历 group1 中的每个 orderList
+            for (List<Object> orderList1 : orderListGroup1) {
+                // 遍历 group2 中的每个 orderList
+                for (List<Object> orderList2 : orderListGroup2) {
+                    // 计算两个 orderList 的相似度
+                    double similarity = LCSSim.calculateLCSSimilarity(orderList1, orderList2);
+                    // 更新最高相似度
+                    if (similarity > highestSimilarity) {
+                        highestSimilarity = similarity;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return highestSimilarity;
+    }
+
 
     /**
      * 计算没有标志性地物 选取左上角的地物计算 (没有使用)
@@ -390,6 +421,20 @@ public class Neo4jServiceImpl implements Neo4jService {
             innerMap.put(mType+"-"+order, innerMap.getOrDefault(order, 0) + 1); // 用类型+顺序进行计数
         }
         return locationCountMap;
+    }
+
+    private   List<List<Object>>  getTypeOrderListByGroupId(Session session,Integer groupId){
+        String cypherQuery = "MATCH p=(n)-[r:NEXT_TO]->() where id(n) ="+groupId+" RETURN r.typeOrderList as list ";
+
+       List<List<Object>> typeOrderList = new ArrayList<>();
+
+        Result result = session.run(cypherQuery);
+        while (result.hasNext()) {
+            Record record = result.next();
+            List<Object> list = record.get("list").asList();// 获取 mId
+            typeOrderList.add(list);
+        }
+        return typeOrderList;
     }
     private  Map<Integer, Map<String, Integer>>  getDistances(Session session,Integer groupId){
         String cypherQuery = "";

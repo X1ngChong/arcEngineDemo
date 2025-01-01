@@ -123,7 +123,7 @@ public class PartServiceImpl implements PartService {
         return locationMap;
     }
     @Override
-    public  HashMap<String, Double> getPartSim2Map(){
+    public  HashMap<String, Double> getPartSim2MapByNearOrder(){
         HashMap<String, Double> orderMap = new HashMap<>();
 
         List<PathResult> resultList =null;
@@ -160,10 +160,59 @@ public class PartServiceImpl implements PartService {
                 String g1 = path1.get(k);
                 Integer g2 = path2.get(k);
 
-                // 检查 locationMap 中是否已经存在相应的键 这里是获取拥有显著性地物的计算
+
                 if (orderMap.get(g1 + "-" + g2) == null) {
                     // 获取相似性分数并存储
-                    Double partLocationSim = neo4jService.getPartOrderSim(Integer.parseInt(g1), g2);
+                    Double partLocationSim = neo4jService.getPartOrderSimByNear(Integer.parseInt(g1), g2);
+                    orderMap.put(g1 + "-" + g2, partLocationSim);
+                }
+            }
+        }
+        return orderMap;
+    }
+
+    @Override
+    public  HashMap<String, Double> getPartSim2MapByNextToOrder(){
+        HashMap<String, Double> orderMap = new HashMap<>();
+
+        List<PathResult> resultList =null;
+        List<Integer[]> finalResultByMatrix = null;
+
+        // 检索数据
+        resultList = redisService.getPathResults("pathResults");
+        finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
+        if(resultList == null){
+            // 从 GetFinalMatrix2  获取路径
+            resultList= getFinalMatrix.getResulyList();
+            // 存储数据
+            if (resultList != null) {
+                redisService.savePathResults("pathResults", resultList);
+            }
+        }
+        if(finalResultByMatrix == null){
+            // GetFinalResultByMatrix 获取路径
+            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+            //存储数据
+            if (finalResultByMatrix != null) {
+                redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
+            }
+        }
+
+        // 遍历并比较每对路径
+        int length = finalResultByMatrix.get(0).length;
+        for (int i = 0; i < finalResultByMatrix.size(); i++) {
+            // 获取当前路径的前 length 个元素
+            List<String> path1 = resultList.get(i).getPath().stream().limit(length).collect(Collectors.toList());
+            List<Integer> path2 = Arrays.asList(finalResultByMatrix.get(i));
+
+            for (int k = 0; k < path1.size(); k++) {
+                String g1 = path1.get(k);
+                Integer g2 = path2.get(k);
+
+
+                if (orderMap.get(g1 + "-" + g2) == null) {
+                    // 获取相似性最高的分数并存储
+                    Double partLocationSim = neo4jService.getPartOrderSimByNextTo(Integer.parseInt(g1), g2);
                     orderMap.put(g1 + "-" + g2, partLocationSim);
                 }
             }
@@ -268,7 +317,9 @@ public class PartServiceImpl implements PartService {
      */
     @Override
     public List<Double[]> getPartSim2() {
-        HashMap<String, Double> partSim1Map = getPartSim2Map();
+//        HashMap<String, Double> partSim1Map = getPartSim2MapByNearOrder();
+        HashMap<String, Double> partSim1Map = getPartSim2MapByNextToOrder();
+
         List<Double[]> result = new ArrayList<>();
 
         List<PathResult> resultList =null;
@@ -351,7 +402,7 @@ public class PartServiceImpl implements PartService {
     @Override
     public List<Double> getPartSim() {
         HashMap<String, Double> partSim1Map = getPartSim1Map();
-        HashMap<String, Double> partSim2Map = getPartSim2Map();
+        HashMap<String, Double> partSim2Map = getPartSim2MapByNearOrder();
         HashMap<String, Double> partSim3Map = getPartSim3Map();
         List<Double> finalSimResult = new ArrayList<>();
 

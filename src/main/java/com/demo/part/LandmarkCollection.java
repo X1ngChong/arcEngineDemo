@@ -19,7 +19,7 @@ public class LandmarkCollection {
     }
 
     /**
-     * 初始化标志性地物集合
+     * 初始化标志性地物集合-----
      */
     private void initializeLandmarks() {
         landmarks.add("school");
