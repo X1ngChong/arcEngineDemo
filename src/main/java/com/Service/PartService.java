@@ -1,5 +1,7 @@
 package com.Service;
 
+import com.Bean.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ public interface PartService {
 
     List<Double> getPartSim();
 
-    List<Integer[]> getFinalList();
+    List<Pair<Double, Integer[]>> getFinalList();
 
 
 

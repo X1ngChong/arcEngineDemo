@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * 最长公共子序列（LCS）***
+ * @author JXS
  */
 public class LCSSim {
 

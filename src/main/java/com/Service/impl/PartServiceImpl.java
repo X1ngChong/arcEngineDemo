@@ -1,6 +1,7 @@
 package com.Service.impl;
 
 import com.Bean.GroupMap;
+import com.Bean.Pair;
 import com.Bean.PathResult;
 import com.Service.PartService;
 import com.controller.DataController;
@@ -447,50 +448,49 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public   List<Integer[]> getFinalList() {
+    public List<Pair<Double, Integer[]>> getFinalList() {
         // 使用传统的 for 循环提取 weight 属性
         List<Double> weights = new ArrayList<>();
 
-        List<PathResult> resultList =null;
+        List<PathResult> resultList = null;
         List<Integer[]> finalResultByMatrix = null;
         List<Double> partSimList = null;
+
         // 检索数据
         resultList = redisService.getPathResults("pathResults");
         finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
         partSimList = redisService.getDoubleArrays("partSimList");
-        if(resultList == null){
-            // 从 GetFinalMatrix2  获取路径
-            resultList= getFinalMatrix.getResulyList();
+
+        if (resultList == null) {
+            // 从 GetFinalMatrix2 获取路径
+            resultList = getFinalMatrix.getResulyList();
             // 存储数据
             if (resultList != null) {
                 redisService.savePathResults("pathResults", resultList);
             }
         }
-        if(finalResultByMatrix == null){
+        if (finalResultByMatrix == null) {
             // GetFinalResultByMatrix 获取路径
-            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
-            //存储数据
+            finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix();
+            // 存储数据
             if (finalResultByMatrix != null) {
                 redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
             }
         }
-        if(partSimList == null){
-            partSimList= getPartSim();
+        if (partSimList == null) {
+            partSimList = getPartSim();
             // 存储数据
             if (partSimList != null) {
                 redisService.saveDoubleArrays("partSimList", partSimList);
             }
         }
 
-        //填充权重数组
+        // 填充权重数组
         if (resultList != null) {
             for (PathResult pathResult : resultList) {
                 weights.add(pathResult.getWeight());
             }
         }
-
-
-
 
         // 使用 List 存储相似度和对应的整数数组
         List<Pair<Double, Integer[]>> similarityList = new ArrayList<>();
@@ -509,14 +509,8 @@ public class PartServiceImpl implements PartService {
             return comparison;
         });
 
-        // 提取排序后的整数数组
-        List<Integer[]> sortedFinalResultByMatrix = new ArrayList<>();
-        for (Pair<Double, Integer[]> pair : similarityList) {
-            sortedFinalResultByMatrix.add(pair.getValue());
-        }
-
-
-        return sortedFinalResultByMatrix;
+        // 返回包含相似度和整数数组的列表
+        return similarityList;
     }
 
     //获取组的平均值
@@ -547,21 +541,5 @@ public class PartServiceImpl implements PartService {
 
         return doubleArray;
     }
-    static class Pair<K, V> {
-        private K key;
-        private V value;
 
-        public Pair(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-    }
 }

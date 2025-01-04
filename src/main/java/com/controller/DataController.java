@@ -1,11 +1,14 @@
 package com.controller;
 
+import com.Bean.Pair;
 import com.Bean.PathResult;
 import com.Service.Neo4jGetGroupNodesService;
 import com.Service.PartService;
+import com.Service.impl.PartServiceImpl;
 import com.demo.overall.impl.matrix.GetFinalMatrix2;
 import com.demo.overall.impl.matrix.GetFinalResultByMatrix;
 
+import com.dto.SimilarityResultDTO;
 import com.redis.RedisService;
 import com.response.ResponseData;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +62,34 @@ public class DataController {
             log.info("结果列表:{}",Arrays.toString(temp));
         }
         return ResponseData.succeed(list);
+    }
+
+    @GetMapping("/OverAll")
+    public ResponseData OverAll() {
+        // 获取相似度和对应的整数数组
+        List<Pair<Double, Integer[]>> finalList = getFinalResultByMatrix.getFinalResult();
+
+        // 将所有需要查询的节点 ID 组合成一个批量查询列表
+        List<Integer[]> batchQueryList = new ArrayList<>();
+        for (Pair<Double, Integer[]> pair : finalList) {
+            batchQueryList.add(pair.getValue());
+        }
+
+        // 批量查询所有节点的 OBJECTID
+        ArrayList<Integer[]> objectIdResults = neo4jGetGroupNodesService.getObjectIdByIds(batchQueryList);
+
+        // 转换为 DTO 列表
+        List<SimilarityResultDTO> resultDTOList = new ArrayList<>();
+        for (int i = 0; i < finalList.size(); i++) {
+            Pair<Double, Integer[]> pair = finalList.get(i);
+            Integer[] objectIds = objectIdResults.get(i); // 获取对应的 OBJECTID 结果
+            SimilarityResultDTO similarityResultDTO = new SimilarityResultDTO(pair.getKey(), objectIds);
+            resultDTOList.add(similarityResultDTO);
+            log.info("结果列表:{}", similarityResultDTO);
+        }
+
+        // 返回 DTO 列表给前端
+        return ResponseData.succeed(resultDTOList);
     }
 
     @GetMapping("/partMethod")
@@ -146,15 +177,30 @@ public class DataController {
     }
     @GetMapping("/getPartSim")
     public ResponseData getPartSim() {
-        List<Integer[]> finalList = partService.getFinalList();
-        //获取OBJECTID作为主键去查找
-        ArrayList<Integer[]> list = neo4jGetGroupNodesService.getObjectIdByIds(finalList);
-        for (Integer [] temp:list
-        ) {
-            log.info("结果列表:{}",Arrays.toString(temp));
+        // 获取相似度和对应的整数数组
+        List<Pair<Double, Integer[]>> finalList = partService.getFinalList();
+
+        // 将所有需要查询的节点 ID 组合成一个批量查询列表
+        List<Integer[]> batchQueryList = new ArrayList<>();
+        for (Pair<Double, Integer[]> pair : finalList) {
+            batchQueryList.add(pair.getValue());
         }
 
-        return ResponseData.succeed(list);
+        // 批量查询所有节点的 OBJECTID
+        ArrayList<Integer[]> objectIdResults = neo4jGetGroupNodesService.getObjectIdByIds(batchQueryList);
+
+        // 转换为 DTO 列表
+        List<SimilarityResultDTO> resultDTOList = new ArrayList<>();
+        for (int i = 0; i < finalList.size(); i++) {
+            Pair<Double, Integer[]> pair = finalList.get(i);
+            Integer[] objectIds = objectIdResults.get(i); // 获取对应的 OBJECTID 结果
+            SimilarityResultDTO similarityResultDTO = new SimilarityResultDTO(pair.getKey(), objectIds);
+            resultDTOList.add(similarityResultDTO);
+            log.info("结果列表:{}", similarityResultDTO);
+        }
+
+        // 返回 DTO 列表给前端
+        return ResponseData.succeed(resultDTOList);
     }
 
 }

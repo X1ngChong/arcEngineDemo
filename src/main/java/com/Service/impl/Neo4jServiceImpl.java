@@ -6,6 +6,7 @@ import com.Common.InfoCommon;
 import com.Common.PathCommon;
 import com.Service.Neo4jService;
 import com.Util.Next_TO.orderListSim.LCSSim;
+import com.Util.Next_TO.orderListSim.OrderSimilarity;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.stereotype.Service;
@@ -292,7 +293,9 @@ public class Neo4jServiceImpl implements Neo4jService {
                 // 遍历 group2 中的每个 orderList
                 for (List<Object> orderList2 : orderListGroup2) {
                     // 计算两个 orderList 的相似度
-                    double similarity = LCSSim.calculateLCSSimilarity(orderList1, orderList2);
+//                    double similarity = LCSSim.calculateLCSSimilarity(orderList1, orderList2);
+                    double similarity = OrderSimilarity.calculateOrderSimilarity(orderList1, orderList2);
+
                     // 更新最高相似度
                     if (similarity > highestSimilarity) {
                         highestSimilarity = similarity;
