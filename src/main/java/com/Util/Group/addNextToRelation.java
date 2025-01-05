@@ -1,4 +1,4 @@
-package com.demo.NewDemo;
+package com.Util.Group;
 
 import com.Common.DriverCommon;
 import org.neo4j.driver.*;
@@ -11,13 +11,11 @@ import static org.neo4j.driver.Values.parameters;
 /**
  * 为组节点创建next_to关系 添加了双向关系
  */
-public class Test5 {
+public class addNextToRelation {
+   public static final String LAYER_NAME = "xianlinRoad"; // 设置道路节点所在图层的名称
+    public static final String Group_LABEL = "xianlinGroup"; // 设置道路节点所在图层的名称
 
-   // public static final String LAYER_NAME = "xianLinTest"; // 设置道路节点所在图层的名称
-   public static final String LAYER_NAME = "xianLinRoad"; // 设置道路节点所在图层的名称
-
-    //public final static String Relationship = "CONTAINS";//草图的关系
-    public final static String Relationship = "Have";//真实图谱的关系
+    public final static String Relationship = "Contain";//真实图谱的关系
     public static void main(String[] args) {
         try (DriverCommon driverCommon = new DriverCommon();
              Driver driver = driverCommon.getGraphDatabase();
@@ -45,10 +43,9 @@ public class Test5 {
     }
 
     private static List<Integer> fetchFatherIds(Session session) {
-        String fetchFatherIdQuery = "MATCH p=(start)-[r:"+Relationship+"]->(end)  " +
+        String fetchFatherIdQuery = "MATCH p=(start:"+Group_LABEL+")-[r:"+Relationship+"]->(end)  " +
                 "WITH start, COLLECT(p) AS paths  " +
-                "RETURN id(start) AS startId, HEAD(paths) AS firstPath  " +
-                "LIMIT 25";
+                "RETURN id(start) AS startId, HEAD(paths) AS firstPath  ";
         List<Integer> fatherIds = new ArrayList<>();
         Result result = session.run(fetchFatherIdQuery);
         while (result.hasNext()) {
@@ -71,7 +68,6 @@ public class Test5 {
                         "toString(centerX1) + ' ' + toString(centerY1) + ', ' + " +
                         "toString(centerX2) + ' ' + toString(centerY2) + ')' AS line " +
                         "CALL spatial.intersects('" + LAYER_NAME + "', line) YIELD node " +
-                      //  "WHERE 'road' IN labels(node) " +  //计算草图的时候给他放开
                         " RETURN COUNT(node) AS count ";
 
         Result result = session.run(cypherQuery, parameters("buildingId1", group1, "buildingId2", group2));

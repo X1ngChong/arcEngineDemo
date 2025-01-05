@@ -10,10 +10,9 @@ import static org.neo4j.driver.Values.parameters;
  * @author JXS
  */
 public class addRoadIdInNextToRelation {
-    // public static final String LAYER_NAME = "xianLinRoad"; //设置道路节点所在图层的名称
-    public static final String LAYER_NAME = "xianLinTest"; //设置道路节点所在图层的名称
+    public static final String LAYER_NAME = "xianlinRoad"; //设置道路节点所在图层的名称
 
-    public static final String GroupName = "Group"; //设置道路节点所在图层的名称
+    public static final String GroupName = "xianlinGroup"; //设置道路节点所在图层的名称
 
 
     public static void main(String[] args) {
@@ -39,7 +38,6 @@ public class addRoadIdInNextToRelation {
                         "toString(centerX1) + ' ' + toString(centerY1) + ', ' + " +
                         "toString(centerX2) + ' ' + toString(centerY2) + ')' AS line " +
                         "CALL spatial.intersects('"+LAYER_NAME+"', line) YIELD node " +
-                        "WHERE 'road' IN labels(node)"+//这边是因为草图的图层道路和地物在一个图层
                         "RETURN id(node) as id";
 
         System.out.println(cypherQuery);

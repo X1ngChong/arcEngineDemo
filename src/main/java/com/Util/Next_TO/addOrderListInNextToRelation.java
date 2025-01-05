@@ -1,9 +1,9 @@
 package com.Util.Next_TO;
 
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.neo4j.driver.*;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.WKTReader;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,12 +11,18 @@ import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class addOrderListInSketchNextToRelation {
+
+public class addOrderListInNextToRelation{
+    private static String GroupLabel  ="xianlinGroup";
+    private static String BuildLabel  ="xianlinBuild";
+
+    private static String RoadLabel  ="xianlinRoad";
+
     public static void main(String[] args) throws Exception {
         // 创建 Neo4j 驱动
         Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "198234bh"));
 
-        String getRelationList = "MATCH p=(s:Group)-[r:NEXT_TO]->(e:Group) RETURN id(s) as s,id(e) as e,id(r) as r,r.roadId as roadId";
+        String getRelationList = "MATCH p=(s:"+GroupLabel+")-[r:NEXT_TO]->(e:"+GroupLabel+") RETURN id(s) as s,id(e) as e,id(r) as r,r.roadId as roadId";
         List<List<Integer>> ids = new ArrayList<>();//填充需要的id列表
         try (Session session = driver.session()) {
             Result result = session.run(getRelationList);
@@ -38,10 +44,10 @@ public class addOrderListInSketchNextToRelation {
         for (List<Integer> finalList:ids
         ) {
             // 查询地物数据
-            String featureQuery = "MATCH (g:Group)-[r:CONTAINS]->(f:building)  where id(g) = "+finalList.get(0) +
+            String featureQuery = "MATCH (g:"+GroupLabel+")-[r:Contain]->(f:"+BuildLabel+")  where id(g) = "+finalList.get(0) +
                     " RETURN id(g) AS groupId, id(f) AS featureId, f.geometry AS geometry, type(r) AS relationship";
             //查询道路数据
-            String roadQuery = "MATCH (r:road) WHERE id(r) = "+finalList.get(2)+" RETURN r.geometry AS geometry";
+            String roadQuery = "MATCH (r:"+RoadLabel+") WHERE id(r) = "+finalList.get(2)+" RETURN r.geometry AS geometry";
 
             // 使用 JTS 解析 WKT
             GeometryFactory geometryFactory = new GeometryFactory();

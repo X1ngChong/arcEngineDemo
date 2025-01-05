@@ -22,27 +22,17 @@ public class CalculateGroupSim {
     private static final double OMEGA2 = 0.5;
     private static final double SIM_VALUE = 0.3;
 
-
-    public static void main(String[] args) {
-        CalculateGroupSim d = new CalculateGroupSim();
-        Map<Integer, List<RealNodeInfo>> sketchToRealMap = d.firstFilter();
-        // 输出结果
-        sketchToRealMap.forEach((sketchId, realNodeInfos) -> {
-                    System.out.println("草图节点 ID: " + sketchId + ", 真实节点 ID: " + realNodeInfos);
-        });
-       // System.out.println("草图节点与真实节点的映射: " + d.firstFilter());
-    }
-    public Map<Integer, List<RealNodeInfo>> firstFilter() {
+    public Map<Integer, List<RealNodeInfo>> firstFilter(String caoTuLabel,String realLabel) {
         Map<Integer, List<RealNodeInfo>> sketchToRealMap = new HashMap<>();
         try (DriverCommon driverCommon = new DriverCommon();
              Driver driver = driverCommon.getGraphDatabase();
              Session session = driver.session()) {
 
             Map<Integer, NodeData> realData = new HashMap<>();
-            collectDataFromDb(session, "MATCH p=()-[r:Have]->() RETURN p", realData);
+            collectDataFromDb(session, "MATCH p=(:"+realLabel+")-[r:Contain]->() RETURN p", realData);
 
             Map<Integer, NodeData> sketchData = new HashMap<>();
-            collectDataFromDb(session, "MATCH p=()-[r:CONTAINS]->() RETURN p", sketchData);
+            collectDataFromDb(session, "MATCH p=(:"+caoTuLabel+")-[r:Contain]->() RETURN p", sketchData);
 
             compareData(realData, sketchData, sketchToRealMap);
 
@@ -70,8 +60,8 @@ public class CalculateGroupSim {
             Path path = record.get("p").asPath();
             int parentId = (int) path.start().id();
 
-            if (path.end().containsKey("type")) {
-                String type = path.end().get("type").asString();
+            if (path.end().containsKey("fclass")) {
+                String type = path.end().get("fclass").asString();
                 addNodeData(dataMap, parentId, type);
             }
         });
@@ -99,9 +89,6 @@ public class CalculateGroupSim {
                 double sim = calculateSimilarity(sketchNodeData, realNodeData);
 
                 if (sim > SIM_VALUE) {
-//                    System.out.println("匹配: 草图节点 ID = " + sketchNodeId +
-//                            ", 真实节点 ID = " + realNodeId +
-//                            ", 相似度 = " + sim);
                     realNodeInfos.add(new RealNodeInfo(realNodeId, sim)); // 添加匹配的真实节点信息
                     matched = true; // 标记已匹配
                 }
@@ -109,7 +96,7 @@ public class CalculateGroupSim {
             if (matched) {
                 sketchToRealMap.put(sketchNodeId, realNodeInfos); // 存储草图节点 ID 和对应的真实节点信息列表
             } else {
-                System.out.println("未找到匹配: 草图节点 ID = " + sketchNodeId);
+                //System.out.println("未找到匹配: 草图节点 ID = " + sketchNodeId);
             }
         }
     }

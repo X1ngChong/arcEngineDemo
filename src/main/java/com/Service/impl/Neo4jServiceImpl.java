@@ -5,7 +5,6 @@ import com.Common.DriverCommon;
 import com.Common.InfoCommon;
 import com.Common.PathCommon;
 import com.Service.Neo4jService;
-import com.Util.Next_TO.orderListSim.LCSSim;
 import com.Util.Next_TO.orderListSim.OrderSimilarity;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
@@ -103,7 +102,7 @@ public class Neo4jServiceImpl implements Neo4jService {
                 for (Integer ids : combinedGroupIds) {
                     List<GroupMap> temp = new ArrayList<>();
                     String cypherQuery = "MATCH (n)-[r]->(m) where  id(n) = "+ids+" and m.type is NOT null " +
-                            "RETURN id(m) as id ,m.type as type ";
+                            "RETURN id(m) as id ,m.fclass as type ";
                     Result result = tx.run(cypherQuery);
                     while (result.hasNext()) {
                         Record record = result.next();
@@ -370,6 +369,34 @@ public class Neo4jServiceImpl implements Neo4jService {
         return highestSimilarity;
     }
 
+    @Override
+    public Integer[] getGroupIdsByTag(String tagName) {
+        // 创建 Driver 对象
+        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
+             Session session = driver.session()) {
+
+            String query = "MATCH (n:"+tagName+") RETURN id(n) as id";
+            Result result = session.run(query);
+
+            // 用于存储查询结果的集合
+            List<Integer> ids = new ArrayList<>();
+
+            // 遍历查询结果
+            while (result.hasNext()) {
+                Record record = result.next();
+                Integer id = record.get("id").asInt(); // 获取 id
+                ids.add(id); // 添加到集合中
+            }
+
+            session.close();
+            driver.close();
+
+            // 将集合转换为数组并返回
+            return ids.toArray(new Integer[0]);
+        }
+
+    }
+
 
     private  Map<Integer, Map<String, Integer>>  getLocations(Session session,Integer groupId,String type){
         String cypherQuery = "";
@@ -407,7 +434,7 @@ public class Neo4jServiceImpl implements Neo4jService {
             cypherQuery = "MATCH (n)-[]->(m) " +
                     "WHERE id(n) = " + groupId +
                     " MATCH (m)-[r:NEAR]->(z) " +
-                    "RETURN id(m) AS mId,m.type as type, r.order AS order";
+                    "RETURN id(m) AS mId,m.fclass as type, r.order AS order";
 
 
         Map<Integer, Map<String, Integer>> locationCountMap = new HashMap<>();
@@ -444,7 +471,7 @@ public class Neo4jServiceImpl implements Neo4jService {
             cypherQuery = "MATCH (n)-[]->(m) " +
                     "WHERE id(n) = " + groupId +
                     " MATCH (m)-[r:NEAR]->(z) " +
-                    "RETURN id(m) AS mId, m.type as type , r.distance AS distance";
+                    "RETURN id(m) AS mId, m.fclass as type , r.distance AS distance";
 
 
         Map<Integer, Map<String, Integer>> distanceCountMap = new HashMap<>();
@@ -479,7 +506,7 @@ public class Neo4jServiceImpl implements Neo4jService {
                 " ORDER BY minY ASC, minX ASC  " +
                 " LIMIT 1  " +
                 "MATCH (m)-[r:NEAR]->(z) " +
-                " RETURN id(m) AS mId,m.type as type, r.location AS location ";
+                " RETURN id(m) AS mId,m.fclass as type, r.location AS location ";
 
         Map<Integer, Map<String, Integer>> locationCountMap = new HashMap<>();
         Result result = session.run(cypherQuery);

@@ -43,13 +43,13 @@ public class PartServiceImpl implements PartService {
      * 打印标志性地物列表 比较路径对 0: [mall, school, null, school]
      */
     @Override
-    public  List<String[]> getIconicFeatureList() {
+    public  List<String[]> getIconicFeatureList(String caoTuLabel,String realLabel) {
         List<String[]> result = new ArrayList<>();
         HashMap<Integer, List<GroupMap>> groupIdMap = neo4jService.getGroupIdMap();
 
         // 从 GetFinalMatrix2 和 GetFinalResultByMatrix 获取路径
-        List<PathResult> resulyList = getFinalMatrix.getResulyList();
-        List<Integer[]> finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix();
+        List<PathResult> resulyList = getFinalMatrix.getResulyList(caoTuLabel,realLabel);
+        List<Integer[]> finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
 
         // 遍历并比较每对路径
         int length = finalResultByMatrix.get(0).length;
@@ -67,7 +67,7 @@ public class PartServiceImpl implements PartService {
      * 获取每个组相对应的方位相似度
      */
     @Override
-    public  HashMap<String, Double> getPartSim1Map(){
+    public  HashMap<String, Double> getPartSim1Map(String caoTuLabel,String realLabel){
         HashMap<String, Double> locationMap = new HashMap<>();
 
         List<PathResult> resultList =null;
@@ -78,7 +78,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -86,14 +86,14 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
                 }
             }
 
-        List<String[]> iconicFeatureList = getIconicFeatureList(); // 获取标志性地物列表
+        List<String[]> iconicFeatureList = getIconicFeatureList(caoTuLabel,realLabel); // 获取标志性地物列表
 
         // 遍历并比较每对路径
         int length = finalResultByMatrix.get(0).length;
@@ -124,7 +124,7 @@ public class PartServiceImpl implements PartService {
         return locationMap;
     }
     @Override
-    public  HashMap<String, Double> getPartSim2MapByNearOrder(){
+    public  HashMap<String, Double> getPartSim2MapByNearOrder(String caoTuLabel,String realLabel){
         HashMap<String, Double> orderMap = new HashMap<>();
 
         List<PathResult> resultList =null;
@@ -135,7 +135,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -143,7 +143,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -173,7 +173,7 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public  HashMap<String, Double> getPartSim2MapByNextToOrder(){
+    public  HashMap<String, Double> getPartSim2MapByNextToOrder(String caoTuLabel,String realLabel){
         HashMap<String, Double> orderMap = new HashMap<>();
 
         List<PathResult> resultList =null;
@@ -184,7 +184,7 @@ public class PartServiceImpl implements PartService {
         finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
         if(resultList == null){
             // 从 GetFinalMatrix2  获取路径
-            resultList= getFinalMatrix.getResulyList();
+            resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
             // 存储数据
             if (resultList != null) {
                 redisService.savePathResults("pathResults", resultList);
@@ -192,7 +192,7 @@ public class PartServiceImpl implements PartService {
         }
         if(finalResultByMatrix == null){
             // GetFinalResultByMatrix 获取路径
-            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
             //存储数据
             if (finalResultByMatrix != null) {
                 redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -221,7 +221,7 @@ public class PartServiceImpl implements PartService {
         return orderMap;
     }
 
-    public  HashMap<String, Double> getPartSim3Map(){
+    public  HashMap<String, Double> getPartSim3Map(String caoTuLabel,String realLabel){
         HashMap<String, Double> locationMap = new HashMap<>();
         List<PathResult> resultList =null;
         List<Integer[]> finalResultByMatrix = null;
@@ -231,7 +231,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -239,7 +239,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -272,8 +272,8 @@ public class PartServiceImpl implements PartService {
 
 
     @Override
-    public List<Double[]> getPartSim1() {
-        HashMap<String, Double> partSim1Map = getPartSim1Map();
+    public List<Double[]> getPartSim1(String caoTuLabel,String realLabel) {
+        HashMap<String, Double> partSim1Map = getPartSim1Map(caoTuLabel,realLabel);
         List<Double[]> result = new ArrayList<>();
 
         List<PathResult> resultList =null;
@@ -284,7 +284,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -292,7 +292,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -317,9 +317,9 @@ public class PartServiceImpl implements PartService {
      * @return
      */
     @Override
-    public List<Double[]> getPartSim2() {
+    public List<Double[]> getPartSim2(String caoTuLabel,String realLabel) {
 //        HashMap<String, Double> partSim1Map = getPartSim2MapByNearOrder();
-        HashMap<String, Double> partSim1Map = getPartSim2MapByNextToOrder();
+        HashMap<String, Double> partSim1Map = getPartSim2MapByNextToOrder(caoTuLabel,realLabel);
 
         List<Double[]> result = new ArrayList<>();
 
@@ -331,7 +331,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -339,7 +339,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -360,8 +360,8 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public List<Double[]> getPartSim3() {
-        HashMap<String, Double> partSim1Map = getPartSim3Map();
+    public List<Double[]> getPartSim3(String caoTuLabel,String realLabel) {
+        HashMap<String, Double> partSim1Map = getPartSim3Map(caoTuLabel,realLabel);
         List<Double[]> result = new ArrayList<>();
 
         List<PathResult> resultList =null;
@@ -372,7 +372,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -380,7 +380,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -401,10 +401,10 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public List<Double> getPartSim() {
-        HashMap<String, Double> partSim1Map = getPartSim1Map();
-        HashMap<String, Double> partSim2Map = getPartSim2MapByNearOrder();
-        HashMap<String, Double> partSim3Map = getPartSim3Map();
+    public List<Double> getPartSim(String caoTuLabel,String realLabel) {
+        HashMap<String, Double> partSim1Map = getPartSim1Map(caoTuLabel,realLabel);
+        HashMap<String, Double> partSim2Map = getPartSim2MapByNearOrder(caoTuLabel,realLabel);
+        HashMap<String, Double> partSim3Map = getPartSim3Map(caoTuLabel,realLabel);
         List<Double> finalSimResult = new ArrayList<>();
 
         List<PathResult> resultList = null;
@@ -415,7 +415,7 @@ public class PartServiceImpl implements PartService {
             finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
             if(resultList == null){
                 // 从 GetFinalMatrix2  获取路径
-                resultList= getFinalMatrix.getResulyList();
+                resultList= getFinalMatrix.getResulyList(caoTuLabel,realLabel);
                 // 存储数据
                 if (resultList != null) {
                     redisService.savePathResults("pathResults", resultList);
@@ -423,7 +423,7 @@ public class PartServiceImpl implements PartService {
             }
             if(finalResultByMatrix == null){
                 // GetFinalResultByMatrix 获取路径
-                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+                finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
                 //存储数据
                 if (finalResultByMatrix != null) {
                     redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -448,7 +448,7 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public List<Pair<Double, Integer[]>> getFinalList() {
+    public List<Pair<Double, Integer[]>> getFinalList(String caoTuLabel,String realLabel) {
         // 使用传统的 for 循环提取 weight 属性
         List<Double> weights = new ArrayList<>();
 
@@ -463,7 +463,7 @@ public class PartServiceImpl implements PartService {
 
         if (resultList == null) {
             // 从 GetFinalMatrix2 获取路径
-            resultList = getFinalMatrix.getResulyList();
+            resultList = getFinalMatrix.getResulyList(caoTuLabel,realLabel);
             // 存储数据
             if (resultList != null) {
                 redisService.savePathResults("pathResults", resultList);
@@ -471,14 +471,14 @@ public class PartServiceImpl implements PartService {
         }
         if (finalResultByMatrix == null) {
             // GetFinalResultByMatrix 获取路径
-            finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix();
+            finalResultByMatrix = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
             // 存储数据
             if (finalResultByMatrix != null) {
                 redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
             }
         }
         if (partSimList == null) {
-            partSimList = getPartSim();
+            partSimList = getPartSim(caoTuLabel,realLabel);
             // 存储数据
             if (partSimList != null) {
                 redisService.saveDoubleArrays("partSimList", partSimList);

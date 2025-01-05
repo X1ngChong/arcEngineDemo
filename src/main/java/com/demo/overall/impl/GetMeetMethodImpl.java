@@ -2,6 +2,7 @@ package com.demo.overall.impl;
 
 import com.Bean.GroupRelationship;
 import com.Bean.RealNodeInfo;
+import com.Service.impl.Neo4jServiceImpl;
 import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
 import com.demo.overall.NewDemoRun.meetRelation.Demo6;
 
@@ -41,32 +42,26 @@ import java.util.Map;
  * @author JXS
  */
 public class GetMeetMethodImpl {
-    public static void main(String[] args) {
-        GetMeetMethodImpl g = new GetMeetMethodImpl();
-        List<Integer[]> realResultList = g.getRealResultList();
-
-        for (Integer[] i : realResultList){
-            System.out.println(Arrays.toString(i));
-        }
-    }
 
     static int count = 0;
 
-    public  List<Integer[]>  getRealResultList() {
+    public  List<Integer[]>  getRealResultList(String caoTuLabel,String realLabel) {
         Demo6 demo6 = new Demo6();
-        List<GroupRelationship> caoTuMeetsList = demo6.getMeetList("Group");
-        List<GroupRelationship> realMeetsList = demo6.getMeetList("xianLinGroup");
+        List<GroupRelationship> caoTuMeetsList = demo6.getMeetList(caoTuLabel);
+        List<GroupRelationship> realMeetsList = demo6.getMeetList(realLabel);
         List<Integer[]> realResultList = new ArrayList<>();
 
-        // 块 ID
-        Integer[] blockIds = {110, 111, 112, 113}; // 这里的顺序随意
+        // 假设我们要比较的草图节点
+        Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
+
+        Integer[] blockIds = neo4jService.getGroupIdsByTag(caoTuLabel);
         int n = blockIds.length;
 
         // 创建邻接矩阵
         int[][] adjacencyMatrix = createAdjacencyMatrix(caoTuMeetsList, blockIds, n);
 
         CalculateGroupSim demo5 = new CalculateGroupSim();
-        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter();
+        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter(caoTuLabel,realLabel);
 
         // 处理每个真实节点 ID 的组合
         findRealBlockIds(realMeetsList, sketchToRealMap, blockIds, adjacencyMatrix, realResultList, n);
@@ -105,7 +100,6 @@ public class GetMeetMethodImpl {
             // 当组合完成时，创建临时邻接矩阵并进行比较
             int[][] tempMatrix = createTempAdjacencyMatrix(realMeetsList, realBlockIds, realBlockIds.length);
             if (areMatricesEqual(adjacencyMatrix, tempMatrix)) {
-//                System.out.println("第" + count++ + "次打印");
                  printMatrix(tempMatrix);
                 realResultList.add(realBlockIds.clone());
                 System.out.println(Arrays.toString(realBlockIds));

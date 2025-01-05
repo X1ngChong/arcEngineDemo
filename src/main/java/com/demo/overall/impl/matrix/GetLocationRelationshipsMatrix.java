@@ -2,6 +2,7 @@ package com.demo.overall.impl.matrix;
 
 import com.Bean.GroupLocationRelationship;
 import com.Bean.RealNodeInfo;
+import com.Service.impl.Neo4jServiceImpl;
 import com.Util.location.OrientationSimilarity;
 import com.demo.overall.NewDemoRun.locationRelation.Demo7;
 import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
@@ -99,27 +100,19 @@ import static com.Util.matrix.PrintMatrix.printMatrix;
 public class GetLocationRelationshipsMatrix {
     private Map<String, double[][]> locationMatrixMap = new HashMap<>(); // 使用 Map 存储矩阵
 
-    public static void main(String[] args) {
-        GetLocationRelationshipsMatrix g1 = new GetLocationRelationshipsMatrix();
-        Map<String, double[][]> topologicalRelationshipsMatrix = g1.getLocationRelationshipsMatrix();
 
-        // 打印所有比较矩阵
-        for (Map.Entry<String, double[][]> entry : topologicalRelationshipsMatrix.entrySet()) {
-            printMatrix("比较矩阵 " + entry.getKey(), entry.getValue());
-        }
-
-    }
-
-    public Map<String, double[][]> getLocationRelationshipsMatrix() {
+    public Map<String, double[][]> getLocationRelationshipsMatrix(String caoTuLabel,String realLabel) {
 
         CalculateGroupSim demo5 = new CalculateGroupSim();
         Demo7 demo7 = new Demo7();
 
         // 获取草图到真实节点的映射
-        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter();
+        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter(caoTuLabel,realLabel);
 
         // 假设我们要比较的草图节点
-        int[] sketchNodes = {110, 111, 112, 113};//这边先写死
+        Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
+
+        Integer[] sketchNodes = neo4jService.getGroupIdsByTag(caoTuLabel);
 
         List<RealNodeInfo>[] similarNodes = new List[sketchNodes.length];
 
@@ -129,11 +122,11 @@ public class GetLocationRelationshipsMatrix {
         }
 
         // 获取真实的方位关系
-        List<GroupLocationRelationship> realLocationList = demo7.getLocationList("xianLinGroup");
+        List<GroupLocationRelationship> realLocationList = demo7.getLocationList(realLabel);
         Map<Integer, List<GroupLocationRelationship>> realRelationships = createRealRelationships(realLocationList);
 
         // 获取草图的方位
-        List<GroupLocationRelationship> caoTuLocationList = demo7.getLocationList("Group");
+        List<GroupLocationRelationship> caoTuLocationList = demo7.getLocationList(caoTuLabel);
         Map<Integer, List<GroupLocationRelationship>>sketchRelationships = createSketchRelationships(caoTuLocationList);
 
         // 创建和填充比较矩阵

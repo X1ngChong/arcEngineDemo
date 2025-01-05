@@ -34,7 +34,7 @@ public class addTypeOrderListInNextToRelation {
     }
 
     private static HashMap<Integer, List<Object>> getAllNextToRelation(Session session) {
-        String cypherQuery = "MATCH p=()-[r:NEXT_TO]->() RETURN id(r) as id,r.orderList as list";
+        String cypherQuery = "MATCH p=()-[r:NEXT_TO]->()  RETURN id(r) as id,r.orderList as list";
 
         System.out.println(cypherQuery);
         Result result = session.run(cypherQuery);
@@ -50,7 +50,7 @@ public class addTypeOrderListInNextToRelation {
 
     private static List<String>  getTypeByOrderList(Session session, List<Object> orderList) {
         List<String> typeList = new ArrayList<>();
-        String cypherQuery = "MATCH (n) where id(n) in "+ orderList +" RETURN n.type as type ";
+        String cypherQuery = "MATCH (n) where id(n) in "+ orderList +" RETURN n.fclass as type ";
 
         System.out.println(cypherQuery);
 

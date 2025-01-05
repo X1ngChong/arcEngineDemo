@@ -2,6 +2,7 @@ package com.demo.overall.impl.matrix;
 
 import com.Bean.GroupRelationship;
 import com.Bean.RealNodeInfo;
+import com.Service.impl.Neo4jServiceImpl;
 import com.demo.overall.NewDemoRun.meetRelation.CalculateGroupSim;
 import com.demo.overall.NewDemoRun.meetRelation.Demo6;
 
@@ -98,26 +99,19 @@ import static com.Util.matrix.PrintMatrix.printMatrix;
  */
 public class GetTopologicalRelationshipsMatrix {
      private Map<String, Integer[][]> topologicalMatrixMap = new HashMap<>(); // 使用 Map 存储矩阵
-    public static void main(String[] args) {
-        GetTopologicalRelationshipsMatrix g1 = new GetTopologicalRelationshipsMatrix();
-        Map<String, Integer[][]> topologicalRelationshipsMatrix = g1.getTopologicalRelationshipsMatrix();
 
-        // 打印所有比较矩阵
-        for (Map.Entry<String, Integer[][]> entry : topologicalRelationshipsMatrix.entrySet()) {
-            printMatrix("比较矩阵 " + entry.getKey(), entry.getValue());
-        }
-
-    }
-    public Map<String, Integer[][]>  getTopologicalRelationshipsMatrix() {
+    public Map<String, Integer[][]>  getTopologicalRelationshipsMatrix(String caoTuLabel,String realLabel) {
 
         CalculateGroupSim demo5 = new CalculateGroupSim();
         Demo6 demo6 = new Demo6();
 
         // 获取草图到真实节点的映射
-        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter();
+        Map<Integer, List<RealNodeInfo>> sketchToRealMap = demo5.firstFilter(caoTuLabel,realLabel);
 
         // 假设我们要比较的草图节点
-        int[] sketchNodes = {110, 111, 112, 113};//这边先写死
+        Neo4jServiceImpl neo4jService = new Neo4jServiceImpl();
+
+        Integer[] sketchNodes = neo4jService.getGroupIdsByTag(caoTuLabel);
 
         List<RealNodeInfo>[] similarNodes = new List[sketchNodes.length];
 
@@ -127,11 +121,11 @@ public class GetTopologicalRelationshipsMatrix {
         }
 
         // 获取真实的相邻关系
-        List<GroupRelationship> realMeetsList = demo6.getMeetList("xianLinGroup");
+        List<GroupRelationship> realMeetsList = demo6.getMeetList(realLabel);
         Map<Integer, List<Integer>> realRelationships = createRealRelationships(realMeetsList);
 
         // 获取草图的相邻关系
-        List<GroupRelationship> caoTuMeetsList = demo6.getMeetList("Group");
+        List<GroupRelationship> caoTuMeetsList = demo6.getMeetList(caoTuLabel);
         Map<Integer, List<Integer>> sketchRelationships = createSketchRelationships(caoTuMeetsList);
 
         // 创建和填充比较矩阵

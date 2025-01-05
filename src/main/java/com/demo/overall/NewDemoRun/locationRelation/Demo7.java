@@ -9,33 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 获取方位关系
+ 方位关系:
+ GroupLocationRelationship{block1Id=1767, block2Id=1769, locationRelationship='South'}
+ GroupLocationRelationship{block1Id=1767, block2Id=1768, locationRelationship='SouthWest'}
+ GroupLocationRelationship{block1Id=1768, block2Id=1769, locationRelationship='East'}
+ GroupLocationRelationship{block1Id=1768, block2Id=1767, locationRelationship='NorthEast'}
+ GroupLocationRelationship{block1Id=1769, block2Id=1768, locationRelationship='West'}
+ GroupLocationRelationship{block1Id=1769, block2Id=1767, locationRelationship='North'}
  * @author JXS
- * 方位关系:
-GroupLocationRelationship{block1Id=110, block2Id=112, locationRelationship='North'}
-GroupLocationRelationship{block1Id=110, block2Id=111, locationRelationship='West'}
-GroupLocationRelationship{block1Id=111, block2Id=110, locationRelationship='East'}
-GroupLocationRelationship{block1Id=111, block2Id=113, locationRelationship='North'}
-GroupLocationRelationship{block1Id=112, block2Id=110, locationRelationship='South'}
-GroupLocationRelationship{block1Id=112, block2Id=113, locationRelationship='West'}
-GroupLocationRelationship{block1Id=113, block2Id=112, locationRelationship='East'}
-GroupLocationRelationship{block1Id=113, block2Id=111, locationRelationship='South'}
-GroupLocationRelationship{block1Id=110, block2Id=113, locationRelationship='NorthWest'}
-GroupLocationRelationship{block1Id=111, block2Id=112, locationRelationship='NorthEast'}
-GroupLocationRelationship{block1Id=112, block2Id=111, locationRelationship='SouthWest'}
-GroupLocationRelationship{block1Id=113, block2Id=110, locationRelationship='SouthEast'}
-
-进程已结束,退出代码0
-
  */
-public class Demo7 {
-    public static void main(String[] args) {
-        Demo7 d7 = new Demo7();
-        List<GroupLocationRelationship> meetsList = d7.getLocationList("xianLinGroup");
-        // 输出结果
-        System.out.println("方位关系:");
-        meetsList.forEach(System.out::println);  // 输出结果
-    }
+public class Demo7 {//这边没问题
     /**
      *
      * @param label 不同label切换真实图谱还有草图

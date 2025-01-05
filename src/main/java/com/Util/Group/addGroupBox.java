@@ -1,4 +1,4 @@
-package com.demo.NewDemo;
+package com.Util.Group;
 
 import com.Common.InfoCommon;
 import org.neo4j.driver.*;
@@ -8,25 +8,8 @@ import java.util.*;
 /**
  * 获取所有父节点的ID 然后用区域内的左上角的点还有右下角的点作为整个地物的包围盒 完成--
  */
-public class Test4 {
-    //public final static String Relationship = "CONTAINS";//草图的关系
-    public final static String Relationship = "Have";//真实图谱的关系
-
-//    public static void main(String[] args) {
-//        try (Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
-//             Session session = driver.session()) {
-//
-//            // 查找所有的组节点的ID
-//            List<Integer> fatherIds  = fetchFatherIds(session);
-//
-//            System.out.println(fatherIds);
-//            System.out.println("连接成功");
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+public class addGroupBox {
+    public final static String Relationship = "Contain";//真实图谱的关系
     public static void main(String[] args) {
         try ( Driver driver = GraphDatabase.driver(InfoCommon.url, AuthTokens.basic(InfoCommon.username, InfoCommon.password));
               Session session = driver.session()) {
@@ -48,8 +31,7 @@ public class Test4 {
     private static List<Integer> fetchFatherIds(Session session) {
         String fetchFatherIdQuery = "MATCH p=(start)-[r:"+Relationship+"]->(end)  " +
                 "WITH start, COLLECT(p) AS paths  " +
-                "RETURN id(start) AS startId, HEAD(paths) AS firstPath  " +
-                "LIMIT 25";
+                "RETURN id(start) AS startId, HEAD(paths) AS firstPath ";
         List<Integer> fatherIds = new ArrayList<>();
         Result result = session.run(fetchFatherIdQuery);
         while (result.hasNext()) {

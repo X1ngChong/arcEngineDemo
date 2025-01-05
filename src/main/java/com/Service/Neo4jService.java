@@ -22,7 +22,9 @@ public interface Neo4jService {
      Double getPartOrderSimByNear(Integer groupId1,Integer groupId2);
     Double getPartOrderSimByNextTo(Integer groupId1,Integer groupId2);
 
-
     Double getPartLocationSimNoType(Integer groupId1,Integer groupId2);
+
+    Integer[] getGroupIdsByTag(String tagName);
+
 
 }

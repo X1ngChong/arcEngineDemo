@@ -20,7 +20,7 @@ public class newAddNearRelation {
 
     public static void main(String[] args) {
 
-        String[] textNames = {"Group"};
+        String[] textNames = {"xianlinGroup"};
        // String[] textNames = {"xianLinGroup"};
 
 
@@ -114,10 +114,10 @@ public class newAddNearRelation {
                                         String order =  CalculateLocation.getOrder(box1,box2);
 
                                         // 添加 NEAR 关系
-                                        //addNearRelation(session2, childId1, childId2, location, distance,order);
+                                        addNearRelation(session2, childId1, childId2, location, distance,order);
 
                                         //添加Orde关系
-                                        changeOrderRelation(session2, childId1, childId2,order);
+                                        //changeOrderRelation(session2, childId1, childId2,order);
                                     }
                                 }
                             }
@@ -199,7 +199,7 @@ public class newAddNearRelation {
             session.run("MATCH (n1), (n2) " +
                     "WHERE ID(n1) = $id1 AND ID(n2) = $id2 " +
                     "CREATE (n1)-[:NEAR {location : $location, distance: $distance, order: $order}]->(n2) ",
-                    parameters("id1", nodeId1, "id2", nodeId2, "location", location, "distance",order, "order"));
+                    parameters("id1", nodeId1, "id2", nodeId2, "location", location, "distance",distance,"order",order));
             System.out.println("添加成功");
         } else {
             System.out.println("关系已存在，未添加");

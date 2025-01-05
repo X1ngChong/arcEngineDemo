@@ -14,6 +14,7 @@ import com.response.ResponseData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -42,13 +43,13 @@ public class DataController {
     @Resource
     private Neo4jGetGroupNodesService neo4jGetGroupNodesService;
     @GetMapping("/S10AndXianLin2")
-    public ResponseData<ArrayList<Integer[]>> getS10AndXianLin2() {
+    public ResponseData<ArrayList<Integer[]>> getS10AndXianLin2(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
         List<Integer[]> finalResultByMatrix = null;
         finalResultByMatrix = redisService.getIntegerArrays("integerArrays");
 
         if(finalResultByMatrix == null){
             // GetFinalResultByMatrix 获取路径
-            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix();
+            finalResultByMatrix  = getFinalResultByMatrix.getFinalResultByMatrix(caoTuLabel,realLabel);
             //存储数据
             if (finalResultByMatrix != null) {
                 redisService.saveIntegerArrays("integerArrays", finalResultByMatrix);
@@ -65,9 +66,9 @@ public class DataController {
     }
 
     @GetMapping("/OverAll")
-    public ResponseData OverAll() {
+    public ResponseData OverAll(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
         // 获取相似度和对应的整数数组
-        List<Pair<Double, Integer[]>> finalList = getFinalResultByMatrix.getFinalResult();
+        List<Pair<Double, Integer[]>> finalList = getFinalResultByMatrix.getFinalResult(caoTuLabel,realLabel);
 
         // 将所有需要查询的节点 ID 组合成一个批量查询列表
         List<Integer[]> batchQueryList = new ArrayList<>();
@@ -93,8 +94,8 @@ public class DataController {
     }
 
     @GetMapping("/partMethod")
-    public ResponseData partMethod() {
-        List<String[]> iconicFeatureList = partService.getIconicFeatureList();
+    public ResponseData partMethod(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
+        List<String[]> iconicFeatureList = partService.getIconicFeatureList(caoTuLabel,realLabel);
         for (String [] temp:iconicFeatureList) {
             log.info("标志性地物列表 : " + Arrays.toString(temp));
         }
@@ -102,8 +103,8 @@ public class DataController {
     }
 
     @GetMapping("/getPartSim1Map")
-    public ResponseData getPartSim1Map() {
-        HashMap<String, Double> partSim1Map = partService.getPartSim1Map();
+    public ResponseData getPartSim1Map(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
+        HashMap<String, Double> partSim1Map = partService.getPartSim1Map(caoTuLabel,realLabel);
         // 遍历 HashMap 的键值对
         for (Map.Entry<String, Double> entry : partSim1Map.entrySet()) {
             String key = entry.getKey(); // 获取键
@@ -114,8 +115,8 @@ public class DataController {
     }
 
     @GetMapping("/getPartSim1")
-    public ResponseData getPartSim1() {
-        List<Double[]> partSim1List = partService.getPartSim1();
+    public ResponseData getPartSim1(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
+        List<Double[]> partSim1List = partService.getPartSim1(caoTuLabel,realLabel);
         for (Double[] array : partSim1List) {
             // 计算平均值
             double sum = 0.0;
@@ -135,8 +136,8 @@ public class DataController {
     }
 
     @GetMapping("/getPartSim2")
-    public ResponseData getPartSim2() {
-        List<Double[]> partSim1List = partService.getPartSim2();
+    public ResponseData getPartSim2(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
+        List<Double[]> partSim1List = partService.getPartSim2(caoTuLabel,realLabel);
         for (Double[] array : partSim1List) {
             // 计算平均值
             double sum = 0.0;
@@ -156,8 +157,8 @@ public class DataController {
     }
 
     @GetMapping("/getPartSim3")
-    public ResponseData getPartSim3() {
-        List<Double[]> partSim1List = partService.getPartSim3();
+    public ResponseData getPartSim3(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
+        List<Double[]> partSim1List = partService.getPartSim3(caoTuLabel,realLabel);
         for (Double[] array : partSim1List) {
             // 计算平均值
             double sum = 0.0;
@@ -176,9 +177,9 @@ public class DataController {
         return ResponseData.succeed();
     }
     @GetMapping("/getPartSim")
-    public ResponseData getPartSim() {
+    public ResponseData getPartSim(@RequestParam String caoTuLabel,@RequestParam String realLabel) {
         // 获取相似度和对应的整数数组
-        List<Pair<Double, Integer[]>> finalList = partService.getFinalList();
+        List<Pair<Double, Integer[]>> finalList = partService.getFinalList(caoTuLabel,realLabel);
 
         // 将所有需要查询的节点 ID 组合成一个批量查询列表
         List<Integer[]> batchQueryList = new ArrayList<>();
