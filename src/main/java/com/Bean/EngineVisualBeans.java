@@ -69,7 +69,6 @@ public class EngineVisualBeans {
         log.info("数据内容为:{}",realResultList);
         Neo4jGetGroupNodesServiceImpl test = new Neo4jGetGroupNodesServiceImpl();
         list  = test.getNodeListByIds(realResultList);
-        //1
 //        GetMeetMethodImpl g = new GetMeetMethodImpl();
 //        List<Integer[]> realResultList = g.getRealResultList();
 //        Neo4jGetGroupNodesImpl test = new Neo4jGetGroupNodesImpl();
